@@ -1,0 +1,40 @@
+/* 
+  WorkPulse Login Screen Styles 
+  Note for React Native: Native styling is exported via style.ts using StyleSheet.create.
+  This CSS file serves as design token & CSS specification reference.
+*/
+
+:root {
+  --wp-bg-gradient-top: #084864;
+  --wp-bg-gradient-mid: #043249;
+  --wp-bg-gradient-bottom: #012133;
+  --wp-primary: #0096C7;
+  --wp-primary-gradient-start: #2563EB;
+  --wp-primary-gradient-end: #0891B2;
+  --wp-card-bg: #FFFFFF;
+  --wp-input-bg: #EEF4F8;
+  --wp-text-primary: #0F172A;
+  --wp-text-secondary: #64748B;
+  --wp-text-link: #0284C7;
+  --wp-badge-bg: #ECFEFF;
+  --wp-badge-border: #BAE6FD;
+}
+
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--wp-bg-gradient-top) 0%, var(--wp-bg-gradient-bottom) 100%);
+}
+
+.login-card {
+  background: var(--wp-card-bg);
+  border-radius: 26px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.sign-in-btn {
+  background: var(--wp-primary);
+  border-radius: 12px;
+  color: #ffffff;
+}
+
