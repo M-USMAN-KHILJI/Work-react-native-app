@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react-native';
 
 import {
@@ -29,11 +32,12 @@ import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
 
 export const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<React.ElementRef<typeof ScrollView>>(null);
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('admin@gmail.com');
+  const [password, setPassword] = useState<string>('1234');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -80,8 +84,6 @@ export const LoginScreen: React.FC = () => {
 
     if (!password.trim()) {
       errs.password = 'Password is required';
-    } else if (password.length < 6) {
-      errs.password = 'Password must be at least 6 characters';
     }
 
     setErrors(errs);
@@ -91,11 +93,18 @@ export const LoginScreen: React.FC = () => {
   const handleSignIn = () => {
     if (!validate()) return;
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert('WorkPulse', `Signed in successfully as ${email}`);
-    }, 1200);
+    if (email.trim().toLowerCase() === 'admin@gmail.com' && password === '1234') {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        navigation.navigate('Dashboard');
+      }, 500);
+    } else {
+      setErrors({
+        email: 'Invalid credentials.',
+        password: 'Invalid credentials.',
+      });
+    }
   };
 
   const handleForgotPassword = () => {
