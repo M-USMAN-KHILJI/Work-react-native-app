@@ -269,8 +269,11 @@ export const DashboardScreen: React.FC = () => {
                 <View style={styles.rateBadge}>
                   <Text style={styles.rateBadgeText}>100%</Text>
                 </View>
-                <View>
-                  <Text style={styles.rateLabel}>📈 ATTENDANCE RATE</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.rateLabel}>
+                    <Text style={styles.rateLabelIcon}>📈  </Text>
+                    ATTENDANCE RATE
+                  </Text>
                   <Text style={styles.rateSub}>Monthly performance snapshot</Text>
                 </View>
               </View>
