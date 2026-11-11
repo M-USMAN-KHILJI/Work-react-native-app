@@ -6,6 +6,8 @@ import {
   StatusBar,
   TouchableOpacity,
   Pressable,
+  Modal,
+  StyleSheet,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -21,14 +23,23 @@ import {
   ChevronRight,
   FileText,
   User,
+  X,
+  Check,
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
+import {
+  performCheckIn,
+  performCheckOut,
+  getActiveSession,
+  getAttendanceHistory,
+  StoredAttendanceRecord,
+} from '../../../utils/attendanceStore';
 
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
@@ -39,10 +50,23 @@ export const DashboardScreen: React.FC = () => {
   const navigation = useNavigation<DashboardNavigationProp>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCheckInModalVisible, setIsCheckInModalVisible] = useState(false);
+
+  // Dynamic current date
+  const now = new Date();
+  const currentMonthYear = now.toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+  const currentDayMonthYear = now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    year: 'numeric',
+  });
 
   const formatTime = () => {
-    const now = new Date();
-    return now.toLocaleTimeString('en-US', {
+    const current = new Date();
+    return current.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
@@ -51,6 +75,84 @@ export const DashboardScreen: React.FC = () => {
 
   const [currentTime, setCurrentTime] = useState<string>(formatTime());
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [todayRecord, setTodayRecord] = useState<StoredAttendanceRecord | null>(null);
+  const [allHistory, setAllHistory] = useState<StoredAttendanceRecord[]>([]);
+
+  const loadTodayState = async () => {
+    const session = await getActiveSession();
+    setIsCheckedIn(!!session);
+
+    const history = await getAttendanceHistory();
+    setAllHistory(history);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const found = history.find((h) => h.date === todayStr);
+    setTodayRecord(found || null);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadTodayState();
+    }, [])
+  );
+
+  // Compute live this-month stats dynamically
+  const currentMonthIdx = now.getMonth();
+  const currentYearStr = String(now.getFullYear());
+  const thisMonthRecords = allHistory.filter((rec) => {
+    const parts = rec.date.split('-');
+    const y = parts[0];
+    const m = parseInt(parts[1], 10) - 1;
+    return y === currentYearStr && m === currentMonthIdx;
+  });
+
+  const presentMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Present')).length;
+  const lateMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Late')).length;
+  const halfLeaveMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Half Leave')).length;
+  const leaveMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Leave')).length;
+  const workingDaysMonthCount = thisMonthRecords.length;
+
+  const handleCheckInPress = () => {
+    if (isCheckedIn) return;
+    setIsCheckInModalVisible(true);
+  };
+
+  const handleConfirmCheckIn = async () => {
+    setIsCheckInModalVisible(false);
+    const res = await performCheckIn(new Date());
+    if (res.success) {
+      Toast.show({
+        type: 'success',
+        text1: 'Check In',
+        text2: res.message,
+      });
+      loadTodayState();
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Check In Failed',
+        text2: res.message,
+      });
+    }
+  };
+
+  const handleCheckOutPress = async () => {
+    const res = await performCheckOut(new Date());
+    if (res.success) {
+      Toast.show({
+        type: 'success',
+        text1: 'Check Out',
+        text2: res.message,
+      });
+      loadTodayState();
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Check Out Failed',
+        text2: res.message,
+      });
+    }
+  };
 
   useEffect(() => {
     // Show light blue success toast on login
@@ -156,7 +258,7 @@ export const DashboardScreen: React.FC = () => {
             end={{ x: 0.9, y: 1 }}
             style={styles.heroCard}
           >
-            <Text style={styles.heroDate}>Thursday • November 2026</Text>
+            <Text style={styles.heroDate}>{currentDayMonthYear.replace(',', ' •')}</Text>
             <Text style={styles.heroGreeting}>Good evening,{'\n'}Usman</Text>
             <Text style={styles.heroDescription}>
               Check in, track your day, and review Present, Late, Half Leave, Leave, and
@@ -171,7 +273,7 @@ export const DashboardScreen: React.FC = () => {
 
               <View style={styles.heroPill}>
                 <Briefcase size={wp(3.5)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>4 working days</Text>
+                <Text style={styles.heroPillText}>{workingDaysMonthCount} working days</Text>
               </View>
             </View>
 
@@ -197,38 +299,72 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </View>
 
-            {/* Status Informational Banner (Not checked in yet) */}
+            {/* Status Informational Banner */}
             <View style={styles.statusBanner}>
-              <Text style={styles.statusBannerTitle}>Not checked in yet</Text>
+              <Text style={styles.statusBannerTitle}>
+                {isCheckedIn ? 'Currently checked in' : 'Not checked in yet'}
+              </Text>
               <Text style={styles.statusBannerSub}>
-                Tap Check In to start your day. Location is required and must be inside the office radius.
+                {isCheckedIn
+                  ? 'Your work hours are being logged. Tap Check Out when you finish.'
+                  : 'Tap Check In to start your day. Location is required and must be inside the office radius.'}
               </Text>
             </View>
 
             {/* Check In & Check Out Action Cards matching image */}
             <View style={styles.actionButtonsRow}>
-              {/* Check In card without tick */}
+              {/* Check In card */}
               <TouchableOpacity
                 activeOpacity={0.8}
-                style={[styles.actionCard, styles.checkInCardDisabled]}
-                onPress={() => setIsCheckedIn(true)}
+                style={[
+                  styles.actionCard,
+                  isCheckedIn ? styles.checkInCardDisabled : styles.checkInCardActiveState,
+                ]}
+                onPress={handleCheckInPress}
+                disabled={isCheckedIn}
               >
+                {isCheckedIn && (
+                  <View style={styles.checkedBadge}>
+                    <Check size={wp(3.4)} color="#FFFFFF" strokeWidth={3} />
+                  </View>
+                )}
                 <View style={styles.actionIconCircle}>
-                  <LogIn size={wp(5.8)} color="#FFFFFF" strokeWidth={2.4} />
+                  <LogIn
+                    size={wp(5.8)}
+                    color="#FFFFFF"
+                    strokeWidth={2.4}
+                  />
                 </View>
-                <Text style={styles.actionCardText}>Check In</Text>
+                <Text style={styles.actionCardText}>
+                  Check In
+                </Text>
               </TouchableOpacity>
 
               {/* Check Out card */}
               <TouchableOpacity
                 activeOpacity={0.85}
-                style={[styles.actionCard, styles.checkOutCardActive]}
-                onPress={() => setIsCheckedIn(false)}
+                style={[
+                  styles.actionCard,
+                  isCheckedIn ? styles.checkOutCardActive : styles.checkOutCardDisabled,
+                ]}
+                onPress={handleCheckOutPress}
+                disabled={!isCheckedIn}
               >
                 <View style={styles.actionIconCircle}>
-                  <LogOut size={wp(5.8)} color="#FFFFFF" strokeWidth={2.4} />
+                  <LogOut
+                    size={wp(5.8)}
+                    color={isCheckedIn ? '#FFFFFF' : '#94A3B8'}
+                    strokeWidth={2.4}
+                  />
                 </View>
-                <Text style={styles.actionCardText}>Check Out</Text>
+                <Text
+                  style={[
+                    styles.actionCardText,
+                    !isCheckedIn && { color: '#94A3B8' },
+                  ]}
+                >
+                  Check Out
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -252,7 +388,9 @@ export const DashboardScreen: React.FC = () => {
               </LinearGradient>
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>CHECK IN</Text>
-                <Text style={styles.metricValue}>10:11 AM</Text>
+                <Text style={styles.metricValue}>
+                  {todayRecord?.checkInTimeFormatted || '—'}
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -275,7 +413,9 @@ export const DashboardScreen: React.FC = () => {
               </LinearGradient>
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>CHECK OUT</Text>
-                <Text style={styles.metricValue}>—</Text>
+                <Text style={styles.metricValue}>
+                  {todayRecord?.checkOutTimeFormatted || '—'}
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -298,7 +438,9 @@ export const DashboardScreen: React.FC = () => {
               </LinearGradient>
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>WORKING HOURS</Text>
-                <Text style={styles.metricValue}>—</Text>
+                <Text style={styles.metricValue}>
+                  {todayRecord?.workingHoursFormatted || '—'}
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -321,7 +463,11 @@ export const DashboardScreen: React.FC = () => {
               </LinearGradient>
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>STATUS</Text>
-                <Text style={styles.metricValue}>—</Text>
+                <Text style={styles.metricValue}>
+                  {todayRecord?.statuses && todayRecord.statuses.length > 0
+                    ? todayRecord.statuses.join(' · ')
+                    : '—'}
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -331,7 +477,7 @@ export const DashboardScreen: React.FC = () => {
             <View style={styles.sectionHeaderRow}>
               <View>
                 <Text style={styles.sectionPreTitle}>THIS MONTH</Text>
-                <Text style={styles.sectionMainTitle}>November 2026</Text>
+                <Text style={styles.sectionMainTitle}>{currentMonthYear}</Text>
               </View>
 
               <TouchableOpacity activeOpacity={0.7}>
@@ -362,19 +508,19 @@ export const DashboardScreen: React.FC = () => {
             {/* 4-Stat Attendance Grid */}
             <View style={styles.statsGrid}>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>4</Text>
+                <Text style={styles.statsNumber}>{presentMonthCount}</Text>
                 <Text style={styles.statsLabel}>Present</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
+                <Text style={styles.statsNumber}>{lateMonthCount}</Text>
                 <Text style={styles.statsLabel}>Late</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
+                <Text style={styles.statsNumber}>{halfLeaveMonthCount}</Text>
                 <Text style={styles.statsLabel}>Half Leave</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
+                <Text style={styles.statsNumber}>{leaveMonthCount}</Text>
                 <Text style={styles.statsLabel}>Leave</Text>
               </View>
             </View>
@@ -414,7 +560,7 @@ export const DashboardScreen: React.FC = () => {
               </View>
 
               <View style={styles.leaveDetailRow}>
-                <Text style={styles.leaveDetailLabel}>November 2026 • 0 paid leave per month</Text>
+                <Text style={styles.leaveDetailLabel}>{currentMonthYear} • 0 paid leave per month</Text>
                 <Text style={styles.leaveDetailValue}>0 / 0</Text>
               </View>
               <View style={styles.leaveDetailRow}>
@@ -438,7 +584,11 @@ export const DashboardScreen: React.FC = () => {
               <FileText size={wp(5)} color="#0284C7" />
             </View>
 
-            <TouchableOpacity activeOpacity={0.7} style={styles.quickLinkItem}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.quickLinkItem}
+              onPress={() => navigation.navigate('Attendance')}
+            >
               <View style={styles.quickLinkLeft}>
                 <Calendar size={wp(4.2)} color="#0D9488" />
                 <Text style={styles.quickLinkText}>Attendance overview</Text>
@@ -454,7 +604,73 @@ export const DashboardScreen: React.FC = () => {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onLogout={handleLogout}
+        activeRoute="Dashboard"
       />
+
+      {/* Confirm Check In Modal */}
+      <Modal
+        visible={isCheckInModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsCheckInModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setIsCheckInModalVisible(false)}
+          />
+          <View style={styles.modalCard}>
+            {/* Header */}
+            <View style={styles.modalHeaderRow}>
+              <Text style={styles.modalTitle}>Confirm check in</Text>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.modalCloseBtn}
+                onPress={() => setIsCheckInModalVisible(false)}
+              >
+                <X size={wp(5.2)} color="#64748B" strokeWidth={2.2} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Time Box with Check-in Icon */}
+            <View style={styles.modalTimeBox}>
+              <View style={styles.modalTimeIconBox}>
+                <LogIn size={wp(5.6)} color="#065F46" strokeWidth={2.4} />
+              </View>
+              <View style={styles.modalTimeCol}>
+                <Text style={styles.modalTimeLabel}>Current Time</Text>
+                <Text style={styles.modalTimeValue}>{currentTime}</Text>
+              </View>
+            </View>
+
+            {/* Explanatory description line */}
+            <Text style={styles.modalPromptText}>
+              Are you sure you want to record your check in for today? Your attendance status will be calculated based on this timestamp.
+            </Text>
+
+            {/* Action Buttons */}
+            <View style={styles.modalActionsRow}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.modalCancelBtn}
+                onPress={() => setIsCheckInModalVisible(false)}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              {/* Check in now button styled as requested */}
+              <TouchableOpacity
+                activeOpacity={0.85}
+                style={styles.modalConfirmBtn}
+                onPress={handleConfirmCheckIn}
+              >
+                <LogIn size={wp(4.6)} color="#065F46" strokeWidth={2.5} />
+                <Text style={styles.modalConfirmText}>Check in now</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

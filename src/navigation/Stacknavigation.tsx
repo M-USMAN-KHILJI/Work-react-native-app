@@ -5,11 +5,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/Auth/Login/login';
 import { DashboardScreen } from '../screens/Main/Dashboard/Dashbaord';
+import { MyAttendanceScreen } from '../screens/Main/Attendance/Myattendance';
+import { MyContractsScreen } from '../screens/Main/Contracts/MyContracts';
+import { MyProfileScreen } from '../screens/Main/Profile/MyProfile';
 import { colors } from '../constants/display';
 
 export type RootStackParamList = {
   Login: undefined;
   Dashboard: undefined;
+  Attendance: undefined;
+  Contracts: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,6 +59,9 @@ export const StackNavigation: React.FC = () => {
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        <Stack.Screen name="Attendance" component={MyAttendanceScreen} />
+        <Stack.Screen name="Contracts" component={MyContractsScreen} />
+        <Stack.Screen name="Profile" component={MyProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

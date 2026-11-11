@@ -18,7 +18,10 @@ import {
   User,
   LogOut,
 } from 'lucide-react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from './Stacknavigation';
 import { WorkPulseLogo } from '../components/WorkPulseLogo';
 import { hp, wp, radius } from '../constants/display';
 
@@ -29,14 +32,17 @@ interface CustomDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  activeRoute?: 'Dashboard' | 'Attendance' | 'Contracts' | 'Profile';
 }
 
 export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   isOpen,
   onClose,
   onLogout,
+  activeRoute = 'Dashboard',
 }) => {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
@@ -109,17 +115,27 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
           {/* 2. MAIN MENU Group */}
           <Text style={styles.groupHeading}>MAIN MENU</Text>
 
-          {/* Dashboard Item (Active State) */}
+          {/* Dashboard Item */}
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.menuItem, styles.menuItemActive]}
-            onPress={onClose}
+            style={[styles.menuItem, activeRoute === 'Dashboard' && styles.menuItemActive]}
+            onPress={() => {
+              onClose();
+              if (activeRoute !== 'Dashboard') {
+                navigation.navigate('Dashboard');
+              }
+            }}
           >
-            <View style={styles.activePillIndicator} />
+            {activeRoute === 'Dashboard' && <View style={styles.activePillIndicator} />}
             <View style={[styles.menuIconContainer, styles.dashboardIconBg]}>
               <LayoutDashboard size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
             </View>
-            <Text style={[styles.menuItemText, styles.menuItemTextActive]}>
+            <Text
+              style={[
+                styles.menuItemText,
+                activeRoute === 'Dashboard' && styles.menuItemTextActive,
+              ]}
+            >
               Dashboard
             </Text>
           </TouchableOpacity>
@@ -127,25 +143,51 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
           {/* My Attendance Item */}
           <TouchableOpacity
             activeOpacity={0.7}
-            style={styles.menuItem}
-            onPress={onClose}
+            style={[styles.menuItem, activeRoute === 'Attendance' && styles.menuItemActive]}
+            onPress={() => {
+              onClose();
+              if (activeRoute !== 'Attendance') {
+                navigation.navigate('Attendance');
+              }
+            }}
           >
+            {activeRoute === 'Attendance' && <View style={styles.activePillIndicator} />}
             <View style={[styles.menuIconContainer, styles.attendanceIconBg]}>
               <CalendarCheck size={wp(5.2)} color="#10B981" strokeWidth={2.3} />
             </View>
-            <Text style={styles.menuItemText}>My Attendance</Text>
+            <Text
+              style={[
+                styles.menuItemText,
+                activeRoute === 'Attendance' && styles.menuItemTextActive,
+              ]}
+            >
+              My Attendance
+            </Text>
           </TouchableOpacity>
 
           {/* My Contracts Item */}
           <TouchableOpacity
             activeOpacity={0.7}
-            style={styles.menuItem}
-            onPress={onClose}
+            style={[styles.menuItem, activeRoute === 'Contracts' && styles.menuItemActive]}
+            onPress={() => {
+              onClose();
+              if (activeRoute !== 'Contracts') {
+                navigation.navigate('Contracts');
+              }
+            }}
           >
+            {activeRoute === 'Contracts' && <View style={styles.activePillIndicator} />}
             <View style={[styles.menuIconContainer, styles.contractIconBg]}>
               <FileSpreadsheet size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
             </View>
-            <Text style={styles.menuItemText}>My Contracts</Text>
+            <Text
+              style={[
+                styles.menuItemText,
+                activeRoute === 'Contracts' && styles.menuItemTextActive,
+              ]}
+            >
+              My Contracts
+            </Text>
           </TouchableOpacity>
 
           {/* Divider */}
@@ -157,13 +199,26 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
           {/* My Profile Item */}
           <TouchableOpacity
             activeOpacity={0.7}
-            style={styles.menuItem}
-            onPress={onClose}
+            style={[styles.menuItem, activeRoute === 'Profile' && styles.menuItemActive]}
+            onPress={() => {
+              onClose();
+              if (activeRoute !== 'Profile') {
+                navigation.navigate('Profile');
+              }
+            }}
           >
+            {activeRoute === 'Profile' && <View style={styles.activePillIndicator} />}
             <View style={[styles.menuIconContainer, styles.profileIconBg]}>
               <User size={wp(5.2)} color="#8B5CF6" strokeWidth={2.3} />
             </View>
-            <Text style={styles.menuItemText}>My Profile</Text>
+            <Text
+              style={[
+                styles.menuItemText,
+                activeRoute === 'Profile' && styles.menuItemTextActive,
+              ]}
+            >
+              My Profile
+            </Text>
           </TouchableOpacity>
         </ScrollView>
 
@@ -301,6 +356,7 @@ const styles = StyleSheet.create({
   bottomCardWrapper: {
     paddingHorizontal: wp(4),
     paddingTop: hp(1.2),
+    marginBottom: hp(0.3),
   },
   bottomCard: {
     flexDirection: 'row',
