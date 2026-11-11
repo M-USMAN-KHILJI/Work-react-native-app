@@ -5,7 +5,7 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
-  
+  Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -20,13 +20,26 @@ import {
   LogOut,
   ChevronRight,
   FileText,
+  User,
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../navigation/Stacknavigation';
+import { CustomDrawer } from '../../../navigation/Drawernavigation';
 
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
 
+type DashboardNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
+
 export const DashboardScreen: React.FC = () => {
+  const navigation = useNavigation<DashboardNavigationProp>();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const formatTime = () => {
     const now = new Date();
     return now.toLocaleTimeString('en-US', {
@@ -40,6 +53,15 @@ export const DashboardScreen: React.FC = () => {
   const [isCheckedIn, setIsCheckedIn] = useState(false);
 
   useEffect(() => {
+    // Show light blue success toast on login
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
+      text2: 'You have logged in successfully.',
+      position: 'top',
+      visibilityTime: 3000,
+    });
+
     const timer = setInterval(() => {
       setCurrentTime(formatTime());
     }, 1000);
@@ -47,13 +69,30 @@ export const DashboardScreen: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const handleLogout = async () => {
+    setIsDropdownOpen(false);
+    try {
+      await AsyncStorage.removeItem('@workpulse_remember_me');
+    } catch (e) {
+      // ignore
+    }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
       {/* Top Application Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity activeOpacity={0.7} style={styles.menuButton}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.menuButton}
+          onPress={() => setIsDrawerOpen(true)}
+        >
           <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
         </TouchableOpacity>
 
@@ -62,9 +101,46 @@ export const DashboardScreen: React.FC = () => {
             <Bell size={wp(5.2)} color={colors.textSecondary} strokeWidth={2} />
           </TouchableOpacity>
 
-          <View style={styles.avatarCircle}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.avatarCircle}
+            onPress={() => setIsDropdownOpen((prev) => !prev)}
+          >
             <Text style={styles.avatarText}>UK</Text>
-          </View>
+          </TouchableOpacity>
+
+          {/* Avatar Dropdown */}
+          {isDropdownOpen && (
+            <>
+              <Pressable
+                style={styles.dropdownBackdrop}
+                onPress={() => setIsDropdownOpen(false)}
+              />
+              <View style={styles.avatarDropdownMenu}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <User size={wp(4.5)} color="#475569" strokeWidth={2} />
+                  <Text style={styles.dropdownItemText}>My Profile</Text>
+                </TouchableOpacity>
+
+                <View style={styles.dropdownItemDivider} />
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.dropdownItem}
+                  onPress={handleLogout}
+                >
+                  <LogOut size={wp(4.5)} color="#475569" strokeWidth={2} />
+                  <Text style={styles.dropdownItemText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </View>
 
@@ -270,10 +346,10 @@ export const DashboardScreen: React.FC = () => {
                   <Text style={styles.rateBadgeText}>100%</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.rateLabel}>
-                    <Text style={styles.rateLabelIcon}>📈  </Text>
-                    ATTENDANCE RATE
-                  </Text>
+                  <View style={styles.rateLabelRow}>
+                    <TrendingUp size={wp(3.8)} color="#0D9488" strokeWidth={2.4} />
+                    <Text style={styles.rateLabel}>ATTENDANCE RATE</Text>
+                  </View>
                   <Text style={styles.rateSub}>Monthly performance snapshot</Text>
                 </View>
               </View>
@@ -305,46 +381,50 @@ export const DashboardScreen: React.FC = () => {
           </View>
 
           {/* 5. Paid Leaves Section */}
-          <View style={styles.sectionCard}>
-            <View style={styles.leavesHeaderTitleRow}>
-              <Calendar size={wp(4.2)} color="#3B4FC8" />
-              <Text style={styles.leavesHeaderTitle}>Paid Leaves (Current Contract)</Text>
-            </View>
-
-            <Text style={styles.bigLeaveNumber}>0</Text>
-            <Text style={styles.bigLeaveSub}>Remaining • 0 total on current contract</Text>
-
-            {/* 4-Stat Leaves Grid */}
-            <View style={[styles.statsGrid, { marginBottom: hp(1.8) }]}>
-              <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
-                <Text style={styles.statsLabel}>Total</Text>
-              </View>
-              <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
-                <Text style={styles.statsLabel}>Remaining</Text>
-              </View>
-              <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
-                <Text style={styles.statsLabel}>This month</Text>
-              </View>
-              <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>0</Text>
-                <Text style={styles.statsLabel}>Monthly limit</Text>
+          <View style={styles.paidLeavesCard}>
+            <View style={styles.paidLeavesHeaderBanner}>
+              <View style={styles.leavesHeaderTitleRow}>
+                <Calendar size={wp(4.4)} color="#4F46E5" strokeWidth={2.3} />
+                <Text style={styles.leavesHeaderTitle}>Paid Leaves (Current Contract)</Text>
               </View>
             </View>
 
-            <View style={styles.leaveDetailRow}>
-              <Text style={styles.leaveDetailLabel}>November 2026 • 0 paid leave per month</Text>
-              <Text style={styles.leaveDetailValue}>0 / 0</Text>
-            </View>
-            <View style={styles.leaveDetailRow}>
-              <Text style={styles.leaveDetailLabel}>No monthly paid leave allowance</Text>
-              <Text style={styles.leaveDetailValue}>—</Text>
-            </View>
-            <View style={styles.leaveDetailRow}>
-              <Text style={styles.leaveDetailLabel}>Contract balance</Text>
-              <Text style={styles.leaveDetailValue}>0 / 0</Text>
+            <View style={styles.paidLeavesBody}>
+              <Text style={styles.bigLeaveNumber}>0</Text>
+              <Text style={styles.bigLeaveSub}>Remaining • 0 total on current contract</Text>
+
+              {/* 4-Stat Leaves Grid */}
+              <View style={[styles.statsGrid, { marginBottom: hp(1.8) }]}>
+                <View style={styles.statsGridItem}>
+                  <Text style={styles.statsNumber}>0</Text>
+                  <Text style={styles.statsLabel}>Total</Text>
+                </View>
+                <View style={styles.statsGridItem}>
+                  <Text style={styles.statsNumber}>0</Text>
+                  <Text style={styles.statsLabel}>Remaining</Text>
+                </View>
+                <View style={styles.statsGridItem}>
+                  <Text style={styles.statsNumber}>0</Text>
+                  <Text style={styles.statsLabel}>This month</Text>
+                </View>
+                <View style={styles.statsGridItem}>
+                  <Text style={styles.statsNumber}>0</Text>
+                  <Text style={styles.statsLabel}>Monthly limit</Text>
+                </View>
+              </View>
+
+              <View style={styles.leaveDetailRow}>
+                <Text style={styles.leaveDetailLabel}>November 2026 • 0 paid leave per month</Text>
+                <Text style={styles.leaveDetailValue}>0 / 0</Text>
+              </View>
+              <View style={styles.leaveDetailRow}>
+                <Text style={styles.leaveDetailLabel}>No monthly paid leave allowance</Text>
+                <Text style={styles.leaveDetailValue}>—</Text>
+              </View>
+              <View style={styles.leaveDetailRow}>
+                <Text style={styles.leaveDetailLabel}>Contract balance</Text>
+                <Text style={styles.leaveDetailValue}>0 / 0</Text>
+              </View>
             </View>
           </View>
 
@@ -368,6 +448,13 @@ export const DashboardScreen: React.FC = () => {
           </View>
         </View>
       </ScrollView>
+
+      {/* Custom Animated Drawer */}
+      <CustomDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onLogout={handleLogout}
+      />
     </SafeAreaView>
   );
 };

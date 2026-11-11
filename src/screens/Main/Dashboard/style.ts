@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { colors, fontSize, radius, shadows, hp, wp } from '../../../constants/display';
+import { Bold } from 'lucide-react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -31,6 +32,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(3),
+    position: 'relative',
+    zIndex: 100,
   },
   bellButton: {
     width: wp(9),
@@ -51,6 +54,50 @@ export const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: fontSize.sm,
     fontWeight: '700',
+  },
+
+  // Avatar Dropdown Menu
+  dropdownBackdrop: {
+    position: 'absolute',
+    top: -hp(10),
+    bottom: -hp(100),
+    left: -wp(100),
+    right: -wp(100),
+    zIndex: 998,
+  },
+  avatarDropdownMenu: {
+    position: 'absolute',
+    top: hp(5.2),
+    right: 0,
+    width: wp(42),
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: '#E8EFF4',
+    paddingVertical: hp(0.6),
+    zIndex: 999,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: wp(3.8),
+    paddingVertical: hp(1.3),
+    gap: wp(2.8),
+  },
+  dropdownItemDivider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginHorizontal: wp(2),
+  },
+  dropdownItemText: {
+    fontSize: hp(1.5),
+    fontWeight: '600',
+    color: '#475569',
   },
 
   // Main Screen Padding
@@ -292,14 +339,14 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2),
   },
   sectionPreTitle: {
-    fontSize: hp(1),
-    fontWeight: '800',
-    color: colors.textMuted,
+    fontSize: hp(1.2),
+    fontWeight: 'bold',
+    color: colors.primaryHover,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
   sectionMainTitle: {
-    fontSize: hp(1.6),
+    fontSize: hp(1.8),
     fontWeight: '800',
     color: colors.textPrimary,
     marginTop: hp(0.3),
@@ -341,14 +388,16 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: -0.3,
   },
+  rateLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(1.2),
+  },
   rateLabel: {
     fontSize: hp(1.15),
     fontWeight: '800',
     color: '#0D9488',
     letterSpacing: 0.5,
-  },
-  rateLabelIcon: {
-    fontSize: hp(1.15),
   },
   rateSub: {
     fontSize: fontSize.xs,
@@ -372,48 +421,75 @@ export const styles = StyleSheet.create({
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    borderRadius: radius.md,
-    overflow: 'hidden',
+    justifyContent: 'space-between',
+    rowGap: hp(1.4),
   },
   statsGridItem: {
-    width: '50%',
-    paddingVertical: hp(1.8),
+    width: '48.2%',
+    paddingVertical: hp(1),
     alignItems: 'center',
-    backgroundColor: '#F6F9FB',
+    justifyContent: 'center',
+    backgroundColor: '#FAFCFD',
+    borderRadius: radius.lg,
+    borderWidth: 1.2,
+    borderColor: '#EDF3F7',
   },
   statsNumber: {
-    fontSize: hp(2.4),
+    fontSize: hp(2.5),
     fontWeight: '800',
-    color: colors.textPrimary,
+    color: '#0F172A',
   },
   statsLabel: {
-    fontSize: fontSize.xs,
-    color: colors.textSecondary,
-    marginTop: hp(0.3),
-    fontWeight: '500',
+    fontSize: hp(1.4),
+    color: '#64748B',
+    marginTop: hp(0.5),
+    fontWeight: '600',
   },
 
   // Paid Leaves Section
+  paidLeavesCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    marginBottom: hp(2),
+    borderWidth: 1,
+    borderColor: '#E8EFF4',
+  },
+  paidLeavesHeaderBanner: {
+    backgroundColor: '#F5F7FF',
+    paddingHorizontal: wp(5),
+    paddingVertical: hp(1.8),
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEF2FF',
+  },
   leavesHeaderTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(2),
-    marginBottom: hp(1.5),
   },
   leavesHeaderTitle: {
-    fontSize: fontSize.sm,
+    fontSize: hp(1.5),
     fontWeight: '700',
-    color: '#3B4FC8',
+    color: '#4F46E5',
+    letterSpacing: -0.2,
+  },
+  paidLeavesBody: {
+    paddingHorizontal: wp(5),
+    paddingTop: hp(2.4),
+    paddingBottom: hp(2.5),
   },
   bigLeaveNumber: {
-    fontSize: hp(3.8),
+    fontSize: hp(4),
     fontWeight: '800',
-    color: colors.textPrimary,
+    color: '#0F172A',
+    lineHeight: hp(4.5),
   },
   bigLeaveSub: {
-    fontSize: fontSize.xs,
-    color: colors.textSecondary,
-    marginBottom: hp(2),
+    fontSize: hp(1.4),
+    color: '#64748B',
+    marginTop: hp(0.5),
+    marginBottom: hp(2.2),
+    fontWeight: '500',
   },
   leaveDetailRow: {
     flexDirection: 'row',

@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -39,12 +40,27 @@ export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('admin@gmail.com');
   const [password, setPassword] = useState<string>('1234');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [isToastVisible, setIsToastVisible] = useState(false);
+
+  useEffect(() => {
+    const loadSavedEmail = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem('@workpulse_saved_email');
+        if (savedEmail) {
+          setEmail(savedEmail);
+          setRememberMe(true);
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    loadSavedEmail();
+  }, []);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -90,14 +106,30 @@ export const LoginScreen: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (!validate()) return;
 
     if (email.trim().toLowerCase() === 'admin@gmail.com' && password === '1234') {
       setLoading(true);
+
+      try {
+        if (rememberMe) {
+          await AsyncStorage.setItem('@workpulse_remember_me', 'true');
+          await AsyncStorage.setItem('@workpulse_saved_email', email.trim());
+        } else {
+          await AsyncStorage.removeItem('@workpulse_remember_me');
+          await AsyncStorage.removeItem('@workpulse_saved_email');
+        }
+      } catch (e) {
+        // ignore
+      }
+
       setTimeout(() => {
         setLoading(false);
-        navigation.navigate('Dashboard');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        });
       }, 500);
     } else {
       setErrors({
