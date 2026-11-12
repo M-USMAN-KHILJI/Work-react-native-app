@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StatusBar,
-  TouchableOpacity,
   Pressable,
   Modal,
   StyleSheet,
@@ -28,6 +26,13 @@ import {
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import {
+  CustomText as Text,
+  CustomTouchableOpacity as TouchableOpacity,
+  CheckInModal,
+  CheckOutModal,
+  showCustomToast,
+} from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import {
   performCheckIn,
@@ -59,9 +64,49 @@ export const DashboardScreen: React.FC = () => {
   } = useAttendance();
 
   const [isCheckInModalVisible, setIsCheckInModalVisible] = useState(false);
+  const [isCheckOutModalVisible, setIsCheckOutModalVisible] = useState(false);
+  const [liveWorkingMinutes, setLiveWorkingMinutes] = useState(0);
+
+  // Live timer for working hours when checked in
+  useEffect(() => {
+    if (!isCheckedIn || !todayRecord?.checkInISO) {
+      setLiveWorkingMinutes(0);
+      return;
+    }
+
+    const updateMinutes = () => {
+      const checkInMs = new Date(todayRecord.checkInISO!).getTime();
+      const nowMs = Date.now();
+      const diffMins = Math.max(0, Math.floor((nowMs - checkInMs) / 60000));
+      setLiveWorkingMinutes(diffMins);
+    };
+
+    updateMinutes();
+    const interval = setInterval(updateMinutes, 10000); // refresh every 10 seconds
+    return () => clearInterval(interval);
+  }, [isCheckedIn, todayRecord?.checkInISO]);
+
+  // Formatted live working hours string
+  const formatMinutes = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0) {
+      return `${h}h ${m}m`;
+    }
+    return `${m}m`;
+  };
+
+  const displayWorkingHours = isCheckedIn
+    ? formatMinutes(liveWorkingMinutes)
+    : todayRecord?.workingHoursFormatted || '—';
 
   // Dynamic current date
   const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const hasCheckedOutToday = !!todayRecord?.checkOutISO;
+  // If user has checked out today, check in is locked until tomorrow
+  const isAfter10AM = currentMinutes >= 10 * 60 && !hasCheckedOutToday;
+
   const currentMonthYear = now.toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
@@ -74,6 +119,22 @@ export const DashboardScreen: React.FC = () => {
 
   const handleCheckInPress = () => {
     if (isCheckedIn) return;
+    if (hasCheckedOutToday) {
+      Toast.show({
+        type: 'info',
+        text1: 'Shift Completed',
+        text2: 'You have already checked out today. Check-in opens tomorrow after 10:00 AM.',
+      });
+      return;
+    }
+    if (!isAfter10AM) {
+      Toast.show({
+        type: 'info',
+        text1: 'Check In Locked',
+        text2: 'Check-in opens at 10:00 AM.',
+      });
+      return;
+    }
     setIsCheckInModalVisible(true);
   };
 
@@ -81,35 +142,41 @@ export const DashboardScreen: React.FC = () => {
     setIsCheckInModalVisible(false);
     const res = await performCheckIn(new Date());
     if (res.success) {
-      Toast.show({
+      showCustomToast({
         type: 'success',
-        text1: 'Check In',
-        text2: res.message,
+        title: 'Check In Successful',
+        message: 'You have checked in successfully.',
       });
       reloadAttendance();
     } else {
-      Toast.show({
+      showCustomToast({
         type: 'error',
-        text1: 'Check In Failed',
-        text2: res.message,
+        title: 'Check In Failed',
+        message: res.message,
       });
     }
   };
 
-  const handleCheckOutPress = async () => {
+  const handleCheckOutPress = () => {
+    if (!isCheckedIn) return;
+    setIsCheckOutModalVisible(true);
+  };
+
+  const handleConfirmCheckOut = async () => {
+    setIsCheckOutModalVisible(false);
     const res = await performCheckOut(new Date());
     if (res.success) {
-      Toast.show({
+      showCustomToast({
         type: 'success',
-        text1: 'Check Out',
-        text2: res.message,
+        title: 'Check Out Successful',
+        message: 'You have checked out successfully.',
       });
       reloadAttendance();
     } else {
-      Toast.show({
+      showCustomToast({
         type: 'error',
-        text1: 'Check Out Failed',
-        text2: res.message,
+        title: 'Check Out Failed',
+        message: res.message,
       });
     }
   };
@@ -241,6 +308,31 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </View>
 
+            {/* Status Informational Banner & Dynamic Checked In Badges */}
+            {isCheckedIn && (
+              <View style={styles.checkedInPillsRow}>
+                {/* Present Badge */}
+                <View style={styles.presentBadge}>
+                  <View style={styles.presentDot} />
+                  <Text style={styles.presentBadgeText}>Present</Text>
+                </View>
+
+                {/* In time badge */}
+                <View style={styles.inTimeBadge}>
+                  <Text style={styles.inTimeBadgeText}>
+                    In {todayRecord?.checkInTimeFormatted || '—'}
+                  </Text>
+                </View>
+
+                {/* Working hours badge */}
+                <View style={styles.workingTimeBadge}>
+                  <Text style={styles.workingTimeBadgeText}>
+                    Working {displayWorkingHours}
+                  </Text>
+                </View>
+              </View>
+            )}
+
             {/* Status Informational Banner */}
             <View style={styles.statusBanner}>
               <Text style={styles.statusBannerTitle}>
@@ -248,7 +340,7 @@ export const DashboardScreen: React.FC = () => {
               </Text>
               <Text style={styles.statusBannerSub}>
                 {isCheckedIn
-                  ? 'Your work hours are being logged. Tap Check Out when you finish.'
+                  ? `Working ${displayWorkingHours}. Tap Check Out when you finish.`
                   : 'Tap Check In to start your day. Location is required and must be inside the office radius.'}
               </Text>
             </View>
@@ -260,12 +352,16 @@ export const DashboardScreen: React.FC = () => {
                 activeOpacity={0.8}
                 style={[
                   styles.actionCard,
-                  isCheckedIn ? styles.checkInCardDisabled : styles.checkInCardActiveState,
+                  (isCheckedIn || hasCheckedOutToday)
+                    ? styles.checkInCardDisabled
+                    : !isAfter10AM
+                    ? styles.checkInCardLocked
+                    : styles.checkInCardActiveState,
                 ]}
                 onPress={handleCheckInPress}
-                disabled={isCheckedIn}
+                disabled={isCheckedIn || hasCheckedOutToday || !isAfter10AM}
               >
-                {isCheckedIn && (
+                {(isCheckedIn || hasCheckedOutToday) && (
                   <View style={styles.checkedBadge}>
                     <Check size={wp(3.4)} color="#FFFFFF" strokeWidth={3} />
                   </View>
@@ -273,11 +369,16 @@ export const DashboardScreen: React.FC = () => {
                 <View style={styles.actionIconCircle}>
                   <LogIn
                     size={wp(5.8)}
-                    color="#FFFFFF"
+                    color={(isCheckedIn || hasCheckedOutToday || isAfter10AM) ? '#FFFFFF' : '#94A3B8'}
                     strokeWidth={2.4}
                   />
                 </View>
-                <Text style={styles.actionCardText}>
+                <Text
+                  style={[
+                    styles.actionCardText,
+                    !isCheckedIn && !hasCheckedOutToday && !isAfter10AM && { color: '#94A3B8' },
+                  ]}
+                >
                   Check In
                 </Text>
               </TouchableOpacity>
@@ -287,22 +388,31 @@ export const DashboardScreen: React.FC = () => {
                 activeOpacity={0.85}
                 style={[
                   styles.actionCard,
-                  isCheckedIn ? styles.checkOutCardActive : styles.checkOutCardDisabled,
+                  hasCheckedOutToday
+                    ? styles.checkOutCardCompleted
+                    : isCheckedIn
+                    ? styles.checkOutCardActive
+                    : styles.checkOutCardDisabled,
                 ]}
                 onPress={handleCheckOutPress}
-                disabled={!isCheckedIn}
+                disabled={!isCheckedIn || hasCheckedOutToday}
               >
+                {hasCheckedOutToday && (
+                  <View style={styles.checkedBadge}>
+                    <Check size={wp(3.4)} color="#FFFFFF" strokeWidth={3} />
+                  </View>
+                )}
                 <View style={styles.actionIconCircle}>
                   <LogOut
                     size={wp(5.8)}
-                    color={isCheckedIn ? '#FFFFFF' : '#94A3B8'}
+                    color={hasCheckedOutToday || isCheckedIn ? '#FFFFFF' : '#94A3B8'}
                     strokeWidth={2.4}
                   />
                 </View>
                 <Text
                   style={[
                     styles.actionCardText,
-                    !isCheckedIn && { color: '#94A3B8' },
+                    !isCheckedIn && !hasCheckedOutToday && { color: '#94A3B8' },
                   ]}
                 >
                   Check Out
@@ -381,7 +491,7 @@ export const DashboardScreen: React.FC = () => {
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>WORKING HOURS</Text>
                 <Text style={styles.metricValue}>
-                  {todayRecord?.workingHoursFormatted || '—'}
+                  {displayWorkingHours}
                 </Text>
               </View>
             </LinearGradient>
@@ -549,70 +659,24 @@ export const DashboardScreen: React.FC = () => {
         activeRoute="Dashboard"
       />
 
-      {/* Confirm Check In Modal */}
-      <Modal
+      {/* Confirm Check In Modal Component */}
+      <CheckInModal
         visible={isCheckInModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsCheckInModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={() => setIsCheckInModalVisible(false)}
-          />
-          <View style={styles.modalCard}>
-            {/* Header */}
-            <View style={styles.modalHeaderRow}>
-              <Text style={styles.modalTitle}>Confirm check in</Text>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.modalCloseBtn}
-                onPress={() => setIsCheckInModalVisible(false)}
-              >
-                <X size={wp(5.2)} color="#64748B" strokeWidth={2.2} />
-              </TouchableOpacity>
-            </View>
+        currentTime={currentTime}
+        onClose={() => setIsCheckInModalVisible(false)}
+        onConfirm={handleConfirmCheckIn}
+      />
 
-            {/* Time Box with Check-in Icon */}
-            <View style={styles.modalTimeBox}>
-              <View style={styles.modalTimeIconBox}>
-                <LogIn size={wp(5.6)} color="#065F46" strokeWidth={2.4} />
-              </View>
-              <View style={styles.modalTimeCol}>
-                <Text style={styles.modalTimeLabel}>Current Time</Text>
-                <Text style={styles.modalTimeValue}>{currentTime}</Text>
-              </View>
-            </View>
-
-            {/* Explanatory description line */}
-            <Text style={styles.modalPromptText}>
-              Are you sure you want to record your check in for today? Your attendance status will be calculated based on this timestamp.
-            </Text>
-
-            {/* Action Buttons */}
-            <View style={styles.modalActionsRow}>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.modalCancelBtn}
-                onPress={() => setIsCheckInModalVisible(false)}
-              >
-                <Text style={styles.modalCancelText}>Cancel</Text>
-              </TouchableOpacity>
-
-              {/* Check in now button styled as requested */}
-              <TouchableOpacity
-                activeOpacity={0.85}
-                style={styles.modalConfirmBtn}
-                onPress={handleConfirmCheckIn}
-              >
-                <LogIn size={wp(4.6)} color="#065F46" strokeWidth={2.5} />
-                <Text style={styles.modalConfirmText}>Check in now</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Confirm Check Out Modal Component */}
+      <CheckOutModal
+        visible={isCheckOutModalVisible}
+        currentTime={currentTime}
+        checkInTime={todayRecord?.checkInTimeFormatted || '—'}
+        workingHours={displayWorkingHours}
+        isEarlyCheckout={currentMinutes < 19 * 60}
+        onClose={() => setIsCheckOutModalVisible(false)}
+        onConfirm={handleConfirmCheckOut}
+      />
     </SafeAreaView>
   );
 };

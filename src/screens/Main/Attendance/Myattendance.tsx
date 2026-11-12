@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StatusBar,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -32,11 +30,17 @@ import {
   UserX,
   CalendarDays,
   ChevronsUpDown,
+  Inbox,
+  History,
 } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import {
+  CustomText as Text,
+  CustomTouchableOpacity as TouchableOpacity,
+} from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { colors, hp, wp } from '../../../constants/display';
@@ -413,13 +417,31 @@ export const MyAttendanceScreen: React.FC = () => {
           {/* 3. Attendance Rate Card */}
           <View style={styles.rateSnapshotBox}>
             <View style={styles.rateTopRow}>
-              <View style={styles.rateBadge}>
-                <Text style={styles.rateBadgeText}>100%</Text>
+              <View
+                style={[
+                  styles.rateBadge,
+                  workingDaysCount === 0 && { backgroundColor: colors.rateZeroBg },
+                ]}
+              >
+                <Text style={styles.rateBadgeText}>
+                  {workingDaysCount === 0 ? '0%' : '100%'}
+                </Text>
               </View>
               <View style={{ flex: 1 }}>
                 <View style={styles.rateLabelRow}>
-                  <TrendingUp size={wp(3.8)} color="#0D9488" strokeWidth={2.4} />
-                  <Text style={styles.rateLabel}>ATTENDANCE RATE</Text>
+                  <TrendingUp
+                    size={wp(3.8)}
+                    color={workingDaysCount === 0 ? colors.rateZeroBg : '#0D9488'}
+                    strokeWidth={2.4}
+                  />
+                  <Text
+                    style={[
+                      styles.rateLabel,
+                      workingDaysCount === 0 && { color: colors.rateZeroBg },
+                    ]}
+                  >
+                    ATTENDANCE RATE
+                  </Text>
                 </View>
                 {/* Shows Current selected month and year */}
                 <Text style={styles.rateMonthTitle}>
@@ -445,10 +467,17 @@ export const MyAttendanceScreen: React.FC = () => {
             {/* Progress Bar under working day */}
             <View style={styles.progressRow}>
               <Text style={styles.progressTextLeft}>Period progress</Text>
-              <Text style={styles.progressTextRight}>100% attended</Text>
+              <Text style={styles.progressTextRight}>
+                {workingDaysCount === 0 ? '0% attended' : '100% attended'}
+              </Text>
             </View>
             <View style={styles.progressBarBg}>
-              <View style={styles.progressBarFill} />
+              <View
+                style={[
+                  styles.progressBarFill,
+                  { width: workingDaysCount === 0 ? '0%' : '100%' },
+                ]}
+              />
             </View>
           </View>
 
@@ -579,7 +608,7 @@ export const MyAttendanceScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* 5. Attendance History Table */}
+          {/* 5. Attendance History Table / Empty State */}
           <View style={styles.historyCard}>
             <View style={styles.historyHeader}>
               <View style={styles.historyIconBox}>
@@ -588,7 +617,7 @@ export const MyAttendanceScreen: React.FC = () => {
               <View style={{ flex: 1 }}>
                 <Text style={styles.historyTitle}>Attendance History</Text>
                 <Text style={styles.historySub}>
-                  Daily logs for {selectedMonth} {selectedYear} • Check in, hours, and status
+                  Daily records for {selectedMonth} {selectedYear} — check-in, hours, and status
                 </Text>
               </View>
             </View>
@@ -600,150 +629,162 @@ export const MyAttendanceScreen: React.FC = () => {
               </View>
             </View>
 
-            <View style={styles.tableContainer}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={true}
-                contentContainerStyle={styles.tableScrollContent}
-              >
-                <View>
-                  {/* Table Header Row */}
-                  <View style={styles.tableHeaderRow}>
-                    <View style={[styles.colDate, styles.colHeaderWithSort]}>
-                      <Text style={styles.tableHeaderCol}>Date</Text>
-                      <ChevronsUpDown size={wp(3.4)} color="#94A3B8" />
-                    </View>
-                    <View style={styles.colCheckIn}>
-                      <Text style={styles.tableHeaderCol}>Check In</Text>
-                    </View>
-                    <View style={styles.colCheckOut}>
-                      <Text style={styles.tableHeaderCol}>Check Out</Text>
-                    </View>
-                    <View style={styles.colWorking}>
-                      <Text style={styles.tableHeaderCol}>Working Hours</Text>
-                    </View>
-                    <View style={styles.colExtra}>
-                      <Text style={styles.tableHeaderCol}>Extra Hours</Text>
-                    </View>
-                    <View style={styles.colLateBy}>
-                      <Text style={styles.tableHeaderCol}>Late By</Text>
-                    </View>
-                    <View style={styles.colStatus}>
-                      <Text style={styles.tableHeaderCol}>Status</Text>
-                    </View>
-                  </View>
-
-                  {/* Table Data Rows */}
-                  {filteredRecords.map((row, index) => (
-                    <View
-                      key={row.date}
-                      style={[styles.tableRow, index % 2 === 1 && styles.tableRowEven]}
-                    >
-                      {/* Date */}
-                      <View style={styles.colDate}>
-                        <Text style={styles.tableTextDate}>{row.date}</Text>
+            {filteredRecords.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <View style={styles.emptyIconBox}>
+                  <Inbox size={wp(8.5)} color="#94A3B8" strokeWidth={2} />
+                </View>
+                <Text style={styles.emptyTitle}>No attendance records</Text>
+                <Text style={styles.emptySubtitle}>
+                  No records for the selected period. Try another month or year.
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.tableContainer}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={true}
+                  contentContainerStyle={styles.tableScrollContent}
+                >
+                  <View>
+                    {/* Table Header Row */}
+                    <View style={styles.tableHeaderRow}>
+                      <View style={[styles.colDate, styles.colHeaderWithSort]}>
+                        <Text style={styles.tableHeaderCol}>Date</Text>
+                        <ChevronsUpDown size={wp(3.4)} color="#94A3B8" />
                       </View>
-
-                      {/* Check In */}
                       <View style={styles.colCheckIn}>
-                        <Text
-                          style={
-                            row.checkInTimeFormatted === '—'
-                              ? styles.tableTextMuted
-                              : styles.tableTextRegular
-                          }
-                        >
-                          {row.checkInTimeFormatted}
-                        </Text>
+                        <Text style={styles.tableHeaderCol}>Check In</Text>
                       </View>
-
-                      {/* Check Out */}
                       <View style={styles.colCheckOut}>
-                        <Text
-                          style={
-                            row.checkOutTimeFormatted === '—'
-                              ? styles.tableTextMuted
-                              : styles.tableTextRegular
-                          }
-                        >
-                          {row.checkOutTimeFormatted}
-                        </Text>
+                        <Text style={styles.tableHeaderCol}>Check Out</Text>
                       </View>
-
-                      {/* Working Hours */}
                       <View style={styles.colWorking}>
-                        <Text
-                          style={
-                            row.workingHoursFormatted === '—'
-                              ? styles.tableTextMuted
-                              : styles.tableTextRegular
-                          }
-                        >
-                          {row.workingHoursFormatted}
-                        </Text>
+                        <Text style={styles.tableHeaderCol}>Working Hours</Text>
                       </View>
-
-                      {/* Extra Hours */}
                       <View style={styles.colExtra}>
-                        <Text
-                          style={
-                            !row.extraHoursFormatted || row.extraHoursFormatted === '—'
-                              ? styles.tableTextMuted
-                              : styles.tableTextRegular
-                          }
-                        >
-                          {row.extraHoursFormatted || '—'}
-                        </Text>
+                        <Text style={styles.tableHeaderCol}>Extra Hours</Text>
                       </View>
-
-                      {/* Late By */}
                       <View style={styles.colLateBy}>
-                        <Text
-                          style={
-                            !row.lateByFormatted || row.lateByFormatted === '—'
-                              ? styles.tableTextMuted
-                              : [styles.tableTextRegular, { color: '#B45309', fontWeight: '700' }]
-                          }
-                        >
-                          {row.lateByFormatted || '—'}
-                        </Text>
+                        <Text style={styles.tableHeaderCol}>Late By</Text>
                       </View>
-
-                      {/* Status Badges */}
                       <View style={styles.colStatus}>
-                        <View style={styles.statusBadgesContainer}>
-                          {row.statuses.map((st) => (
-                            <View
-                              key={st}
-                              style={[
-                                styles.statusBadge,
-                                st === 'Present' && styles.statusBadgePresent,
-                                st === 'Late' && styles.statusBadgeLate,
-                                st === 'Short Leave' && styles.statusBadgeLate,
-                                st === 'Half Leave' && styles.statusBadgeLate,
-                                st === 'Leave' && styles.statusBadgeLeave,
-                              ]}
-                            >
-                              <Text
+                        <Text style={styles.tableHeaderCol}>Status</Text>
+                      </View>
+                    </View>
+
+                    {/* Table Data Rows */}
+                    {filteredRecords.map((row, index) => (
+                      <View
+                        key={row.date}
+                        style={[styles.tableRow, index % 2 === 1 && styles.tableRowEven]}
+                      >
+                        {/* Date */}
+                        <View style={styles.colDate}>
+                          <Text style={styles.tableTextDate}>{row.date}</Text>
+                        </View>
+
+                        {/* Check In */}
+                        <View style={styles.colCheckIn}>
+                          <Text
+                            style={
+                              row.checkInTimeFormatted === '—'
+                                ? styles.tableTextMuted
+                                : styles.tableTextRegular
+                            }
+                          >
+                            {row.checkInTimeFormatted}
+                          </Text>
+                        </View>
+
+                        {/* Check Out */}
+                        <View style={styles.colCheckOut}>
+                          <Text
+                            style={
+                              row.checkOutTimeFormatted === '—'
+                                ? styles.tableTextMuted
+                                : styles.tableTextRegular
+                            }
+                          >
+                            {row.checkOutTimeFormatted}
+                          </Text>
+                        </View>
+
+                        {/* Working Hours */}
+                        <View style={styles.colWorking}>
+                          <Text
+                            style={
+                              row.workingHoursFormatted === '—'
+                                ? styles.tableTextMuted
+                                : styles.tableTextRegular
+                            }
+                          >
+                            {row.workingHoursFormatted}
+                          </Text>
+                        </View>
+
+                        {/* Extra Hours */}
+                        <View style={styles.colExtra}>
+                          <Text
+                            style={
+                              !row.extraHoursFormatted || row.extraHoursFormatted === '—'
+                                ? styles.tableTextMuted
+                                : styles.tableTextRegular
+                            }
+                          >
+                            {row.extraHoursFormatted || '—'}
+                          </Text>
+                        </View>
+
+                        {/* Late By */}
+                        <View style={styles.colLateBy}>
+                          <Text
+                            style={
+                              !row.lateByFormatted || row.lateByFormatted === '—'
+                                ? styles.tableTextMuted
+                                : [styles.tableTextRegular, { color: '#B45309', fontWeight: '700' }]
+                            }
+                          >
+                            {row.lateByFormatted || '—'}
+                          </Text>
+                        </View>
+
+                        {/* Status Badges */}
+                        <View style={styles.colStatus}>
+                          <View style={styles.statusBadgesContainer}>
+                            {row.statuses.map((st) => (
+                              <View
+                                key={st}
                                 style={[
-                                  styles.statusBadgeText,
-                                  st === 'Present' && styles.statusTextPresent,
-                                  (st === 'Late' || st === 'Short Leave' || st === 'Half Leave') &&
-                                    styles.statusTextLate,
-                                  st === 'Leave' && styles.statusTextLeave,
+                                  styles.statusBadge,
+                                  st === 'Present' && styles.statusBadgePresent,
+                                  st === 'Late' && styles.statusBadgeLate,
+                                  st === 'Short Leave' && styles.statusBadgeLate,
+                                  st === 'Half Leave' && styles.statusBadgeLate,
+                                  st === 'Leave' && styles.statusBadgeLeave,
                                 ]}
                               >
-                                {st}
-                              </Text>
-                            </View>
-                          ))}
+                                <Text
+                                  style={[
+                                    styles.statusBadgeText,
+                                    st === 'Present' && styles.statusTextPresent,
+                                    (st === 'Late' || st === 'Short Leave' || st === 'Half Leave') &&
+                                      styles.statusTextLate,
+                                    st === 'Leave' && styles.statusTextLeave,
+                                  ]}
+                                >
+                                  {st}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  ))}
-                </View>
-              </ScrollView>
-            </View>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           {/* 6. Attendance Rules Accordion */}

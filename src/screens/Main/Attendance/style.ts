@@ -520,6 +520,47 @@ export const styles = StyleSheet.create({
     color: colors.textSlate,
   },
 
+  // Empty State for No Attendance Records
+  emptyContainer: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.2,
+    borderColor: '#E8EFF4',
+    borderRadius: radius.cardTop,
+    paddingVertical: hp(5),
+    paddingHorizontal: wp(5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 1,
+  },
+  emptyIconBox: {
+    width: wp(18),
+    height: wp(18),
+    borderRadius: radius.full,
+    backgroundColor: '#F0F4F8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: hp(2.4),
+  },
+  emptyTitle: {
+    fontSize: fontSize.md,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    letterSpacing: -0.2,
+    marginBottom: hp(0.8),
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: hp(2.4),
+    maxWidth: wp(72),
+  },
+
   // Attendance History Table
   tableContainer: {
     borderWidth: 1,

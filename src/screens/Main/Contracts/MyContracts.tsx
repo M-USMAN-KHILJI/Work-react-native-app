@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StatusBar,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,6 +20,10 @@ import {
   User,
   LogOut,
 } from 'lucide-react-native';
+import {
+  CustomText as Text,
+  CustomTouchableOpacity as TouchableOpacity,
+} from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import { colors, hp, wp } from '../../../constants/display';
 import { useDrawer } from '../../../hooks';

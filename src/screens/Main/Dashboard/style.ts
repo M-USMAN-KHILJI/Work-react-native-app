@@ -221,23 +221,76 @@ export const styles = StyleSheet.create({
     color: colors.textDark,
     letterSpacing: 0.2,
   },
+  // Checked in status pills row
+  checkedInPillsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(2),
+    marginBottom: hp(1.8),
+    flexWrap: 'wrap',
+  },
+  presentBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.6),
+    borderRadius: radius.full,
+    gap: wp(1.5),
+  },
+  presentDot: {
+    width: wp(2.2),
+    height: wp(2.2),
+    borderRadius: wp(1.1),
+    backgroundColor: '#15803D',
+  },
+  presentBadgeText: {
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    color: '#15803D',
+  },
+  inTimeBadge: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.6),
+    borderRadius: radius.full,
+  },
+  inTimeBadgeText: {
+    fontSize: fontSize.xs,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  workingTimeBadge: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.6),
+    borderRadius: radius.full,
+  },
+  workingTimeBadgeText: {
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    color: '#065F46',
+  },
+
   statusBanner: {
     backgroundColor: '#F0F9FF',
     borderWidth: 1,
     borderColor: colors.accentBorder,
     borderRadius: radius.lg,
-    paddingHorizontal: wp(2.7),
-    paddingVertical: hp(0.5),
+    paddingHorizontal: wp(3.8),
+    paddingVertical: hp(1.4),
     marginBottom: hp(2),
   },
   statusBannerTitle: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.sm,
     fontWeight: '700',
-    color: colors.textLink,
-    marginBottom: hp(0.4),
+    color: '#0369A1',
+    marginBottom: hp(0.3),
   },
   statusBannerSub: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     color: colors.textSecondary,
     lineHeight: hp(2),
   },
@@ -258,8 +311,12 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   checkInCardActiveState: {
-    backgroundColor: colors.actionOcean,
+    backgroundColor: colors.checkInActive,
     ...shadows.button,
+  },
+  checkInCardLocked: {
+    backgroundColor: colors.actionDisabledBg,
+    opacity: 0.7,
   },
   checkInCardDisabled: {
     backgroundColor: colors.checkInSuccess,
@@ -267,6 +324,10 @@ export const styles = StyleSheet.create({
   checkOutCardActive: {
     backgroundColor: colors.actionOcean,
     ...shadows.button,
+  },
+  checkOutCardCompleted: {
+    backgroundColor: colors.actionOcean,
+    opacity: 0.55,
   },
   checkOutCardDisabled: {
     backgroundColor: colors.actionDisabledBg,

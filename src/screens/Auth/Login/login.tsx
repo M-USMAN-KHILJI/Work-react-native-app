@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
-  Text,
   Platform,
   StatusBar,
-  TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   ScrollView,
@@ -28,6 +26,8 @@ import {
   FadeInUp,
   GradientText,
   Toast,
+  CustomText as Text,
+  CustomTouchableOpacity as TouchableOpacity,
 } from '../../../components';
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';

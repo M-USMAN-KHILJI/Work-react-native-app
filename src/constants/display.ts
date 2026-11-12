@@ -18,6 +18,7 @@ export const colors = {
 
   // Button Linear Gradient
   buttonGradient: ['#086685', '#027ea7', '#008cb9', '#0095c3'] as const,
+  checkInButtonGradient: ['#086685', '#027EA7', '#0095C3'] as const,
 
   // Deep Background Gradients (WorkPulse Enterprise Dark Teal Theme)
   bgGradientTop: '#084864',
@@ -58,14 +59,17 @@ export const colors = {
 
   // Action Buttons (Check In / Check Out)
   actionOcean: '#006D8F',
+  checkInActive: '#00bc7c',
   checkInSuccess: '#a6e0cc',
   checkInSuccessText: '#065F46',
+  checkOutSuccess: '#94d2bd',
   actionDisabledBg: '#F1F5F9',
 
   // Teal Performance & Badges
   performanceTeal: '#0D9488',
   performanceTealBg: '#F8FCFE',
   performanceBorder: '#E0F2FE',
+  rateZeroBg: '#fc2a3e',
 
   // Attendance Metric & Status Card Colors (Preserving exact visual design)
   status: {
@@ -116,6 +120,19 @@ export const colors = {
     timeBoxBg: '#F0FDFA',
     timeBoxBorder: '#99F6E4',
     iconBoxBg: '#A7F3D0',
+  },
+
+  // Profile Tiles & Containers (Enriched tint for clear visual distinction)
+  profile: {
+    memberSinceBg: '#E0F7EF',
+    accountStatusBg: '#D9ECF7',
+    employeeIdBg: '#EFEAFD',
+    fullNameBg: '#EBF9F4',
+    emailAddressBg: '#E5F4FC',
+    employeeIdTileBg: '#F1F3F6',
+    designationBg: '#E0F2F7',
+    joiningDateBg: '#FFFBE8',
+    monthlySalaryBg: '#F3EBFD',
   },
 } as const;
 

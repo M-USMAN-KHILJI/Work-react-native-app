@@ -7,3 +7,8 @@ export * from './KeyboardAvoidWrapper';
 export * from './FadeInUp';
 export * from './GradientText';
 export * from './Toast';
+export * from './CustomText';
+export * from './CustomTouchableOpacity';
+export * from './CheckInModal';
+export * from './CheckOutModal';
+export * from './CustomToastMessage';
