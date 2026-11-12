@@ -27,29 +27,37 @@ import {
   Check,
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import {
   performCheckIn,
   performCheckOut,
-  getActiveSession,
-  getAttendanceHistory,
-  StoredAttendanceRecord,
 } from '../../../utils/attendanceStore';
+import { useDrawer, useCurrentTime, useAttendance } from '../../../hooks';
 
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
 
-type DashboardNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
-
 export const DashboardScreen: React.FC = () => {
-  const navigation = useNavigation<DashboardNavigationProp>();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const {
+    isDrawerOpen,
+    openDrawer,
+    closeDrawer,
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    handleLogout,
+    navigation,
+  } = useDrawer();
+
+  const currentTime = useCurrentTime();
+  const {
+    isCheckedIn,
+    todayRecord,
+    monthStats,
+    reload: reloadAttendance,
+  } = useAttendance();
+
   const [isCheckInModalVisible, setIsCheckInModalVisible] = useState(false);
 
   // Dynamic current date
@@ -63,54 +71,6 @@ export const DashboardScreen: React.FC = () => {
     month: 'long',
     year: 'numeric',
   });
-
-  const formatTime = () => {
-    const current = new Date();
-    return current.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  const [currentTime, setCurrentTime] = useState<string>(formatTime());
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
-  const [todayRecord, setTodayRecord] = useState<StoredAttendanceRecord | null>(null);
-  const [allHistory, setAllHistory] = useState<StoredAttendanceRecord[]>([]);
-
-  const loadTodayState = async () => {
-    const session = await getActiveSession();
-    setIsCheckedIn(!!session);
-
-    const history = await getAttendanceHistory();
-    setAllHistory(history);
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    const found = history.find((h) => h.date === todayStr);
-    setTodayRecord(found || null);
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      loadTodayState();
-    }, [])
-  );
-
-  // Compute live this-month stats dynamically
-  const currentMonthIdx = now.getMonth();
-  const currentYearStr = String(now.getFullYear());
-  const thisMonthRecords = allHistory.filter((rec) => {
-    const parts = rec.date.split('-');
-    const y = parts[0];
-    const m = parseInt(parts[1], 10) - 1;
-    return y === currentYearStr && m === currentMonthIdx;
-  });
-
-  const presentMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Present')).length;
-  const lateMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Late')).length;
-  const halfLeaveMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Half Leave')).length;
-  const leaveMonthCount = thisMonthRecords.filter((r) => r.statuses.includes('Leave')).length;
-  const workingDaysMonthCount = thisMonthRecords.length;
 
   const handleCheckInPress = () => {
     if (isCheckedIn) return;
@@ -126,7 +86,7 @@ export const DashboardScreen: React.FC = () => {
         text1: 'Check In',
         text2: res.message,
       });
-      loadTodayState();
+      reloadAttendance();
     } else {
       Toast.show({
         type: 'error',
@@ -144,7 +104,7 @@ export const DashboardScreen: React.FC = () => {
         text1: 'Check Out',
         text2: res.message,
       });
-      loadTodayState();
+      reloadAttendance();
     } else {
       Toast.show({
         type: 'error',
@@ -163,26 +123,7 @@ export const DashboardScreen: React.FC = () => {
       position: 'top',
       visibilityTime: 3000,
     });
-
-    const timer = setInterval(() => {
-      setCurrentTime(formatTime());
-    }, 1000);
-
-    return () => clearInterval(timer);
   }, []);
-
-  const handleLogout = async () => {
-    setIsDropdownOpen(false);
-    try {
-      await AsyncStorage.removeItem('@workpulse_remember_me');
-    } catch (e) {
-      // ignore
-    }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -193,7 +134,7 @@ export const DashboardScreen: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.menuButton}
-          onPress={() => setIsDrawerOpen(true)}
+          onPress={openDrawer}
         >
           <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
         </TouchableOpacity>
@@ -206,7 +147,7 @@ export const DashboardScreen: React.FC = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.avatarCircle}
-            onPress={() => setIsDropdownOpen((prev) => !prev)}
+            onPress={toggleDropdown}
           >
             <Text style={styles.avatarText}>UK</Text>
           </TouchableOpacity>
@@ -216,14 +157,15 @@ export const DashboardScreen: React.FC = () => {
             <>
               <Pressable
                 style={styles.dropdownBackdrop}
-                onPress={() => setIsDropdownOpen(false)}
+                onPress={closeDropdown}
               />
               <View style={styles.avatarDropdownMenu}>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.dropdownItem}
                   onPress={() => {
-                    setIsDropdownOpen(false);
+                    closeDropdown();
+                    navigation.navigate('Profile');
                   }}
                 >
                   <User size={wp(4.5)} color="#475569" strokeWidth={2} />
@@ -273,7 +215,7 @@ export const DashboardScreen: React.FC = () => {
 
               <View style={styles.heroPill}>
                 <Briefcase size={wp(3.5)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>{workingDaysMonthCount} working days</Text>
+                <Text style={styles.heroPillText}>{monthStats.workingDays} working days</Text>
               </View>
             </View>
 
@@ -508,19 +450,19 @@ export const DashboardScreen: React.FC = () => {
             {/* 4-Stat Attendance Grid */}
             <View style={styles.statsGrid}>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>{presentMonthCount}</Text>
+                <Text style={styles.statsNumber}>{monthStats.present}</Text>
                 <Text style={styles.statsLabel}>Present</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>{lateMonthCount}</Text>
+                <Text style={styles.statsNumber}>{monthStats.late}</Text>
                 <Text style={styles.statsLabel}>Late</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>{halfLeaveMonthCount}</Text>
+                <Text style={styles.statsNumber}>{monthStats.halfLeave}</Text>
                 <Text style={styles.statsLabel}>Half Leave</Text>
               </View>
               <View style={styles.statsGridItem}>
-                <Text style={styles.statsNumber}>{leaveMonthCount}</Text>
+                <Text style={styles.statsNumber}>{monthStats.leave}</Text>
                 <Text style={styles.statsLabel}>Leave</Text>
               </View>
             </View>
@@ -602,7 +544,7 @@ export const DashboardScreen: React.FC = () => {
       {/* Custom Animated Drawer */}
       <CustomDrawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={closeDrawer}
         onLogout={handleLogout}
         activeRoute="Dashboard"
       />

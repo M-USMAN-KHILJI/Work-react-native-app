@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    marginTop : hp(0.8),
+    marginTop: hp(0.8),
     paddingBottom: hp(4),
   },
   // Top Hero Section
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2.5),
   },
   heroTitle: {
-    fontSize: hp(4),
+    fontSize: fontSize.hero,
     fontWeight: '800',
     color: colors.textWhite,
     lineHeight: hp(4.6),
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
   },
   welcomeTitle: {
     marginTop: hp(1.8),
-    fontSize: hp(3),
+    fontSize: fontSize.xxl,
     fontWeight: '700',
     color: colors.textPrimary,
     letterSpacing: -0.4,
@@ -92,4 +92,3 @@ export const styles = StyleSheet.create({
     marginTop: hp(0.5),
   },
 });
-

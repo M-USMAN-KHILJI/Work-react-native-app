@@ -4,7 +4,7 @@ import { colors, fontSize, radius, shadows, hp, wp } from '../../../constants/di
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F7FA',
+    backgroundColor: colors.appBackground,
   },
   scrollContent: {
     paddingBottom: hp(4),
@@ -17,9 +17,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: wp(5),
     paddingVertical: hp(1.5),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderBottomWidth: 1,
-    borderBottomColor: '#EBF1F5',
+    borderBottomColor: colors.borderSubtle,
   },
   menuButton: {
     width: wp(10),
@@ -45,12 +45,12 @@ export const styles = StyleSheet.create({
     width: wp(9),
     height: wp(9),
     borderRadius: wp(4.5),
-    backgroundColor: '#0083B0',
+    backgroundColor: colors.primaryHover,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    color: '#FFFFFF',
+    color: colors.textWhite,
     fontSize: fontSize.sm,
     fontWeight: '700',
   },
@@ -69,10 +69,10 @@ export const styles = StyleSheet.create({
     top: hp(5.2),
     right: 0,
     width: wp(42),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     paddingVertical: hp(0.6),
     zIndex: 999,
     shadowColor: '#000',
@@ -90,13 +90,13 @@ export const styles = StyleSheet.create({
   },
   dropdownItemDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.borderDivider,
     marginHorizontal: wp(2),
   },
   dropdownItemText: {
-    fontSize: hp(1.5),
+    fontSize: fontSize.md,
     fontWeight: '600',
-    color: '#475569',
+    color: colors.textSecondary,
   },
 
   // Main Screen Padding
@@ -120,8 +120,8 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   heroTitle: {
-    color: '#FFFFFF',
-    fontSize: hp(2.6),
+    color: colors.textWhite,
+    fontSize: fontSize.hero,
     fontWeight: '800',
     lineHeight: hp(3.2),
     letterSpacing: -0.4,
@@ -149,12 +149,12 @@ export const styles = StyleSheet.create({
     gap: wp(1.2),
   },
   heroPillText: {
-    color: '#FFFFFF',
-    fontSize: hp(1.25),
+    color: colors.textWhite,
+    fontSize: fontSize.xs,
     fontWeight: '600',
   },
   monthSelectorButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.md,
     flexDirection: 'row',
     alignItems: 'center',
@@ -171,19 +171,19 @@ export const styles = StyleSheet.create({
   },
   heroFooterHint: {
     color: 'rgba(255, 255, 255, 0.65)',
-    fontSize: hp(1.1),
+    fontSize: fontSize.xs,
     marginTop: hp(1.2),
     fontWeight: '500',
   },
 
   // 2. Report Filter Card (Select Year / Month / View Type)
   reportCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     padding: wp(4.5),
     marginBottom: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     ...shadows.card,
   },
   reportHeaderRow: {
@@ -196,19 +196,19 @@ export const styles = StyleSheet.create({
     width: wp(10),
     height: wp(10),
     borderRadius: radius.md,
-    backgroundColor: '#E0F2FE',
+    backgroundColor: colors.performanceBorder,
     justifyContent: 'center',
     alignItems: 'center',
   },
   reportTitle: {
-    fontSize: hp(1.9),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     letterSpacing: -0.2,
   },
   reportSub: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     marginTop: hp(0.2),
   },
 
@@ -217,9 +217,9 @@ export const styles = StyleSheet.create({
     marginBottom: hp(1.4),
   },
   selectorLabel: {
-    fontSize: hp(1.15),
+    fontSize: fontSize.xs,
     fontWeight: '700',
-    color: '#64748B',
+    color: colors.textSecondary,
     marginBottom: hp(0.5),
     letterSpacing: 0.3,
   },
@@ -227,24 +227,24 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderWidth: 1.2,
-    borderColor: '#E2E8F0',
+    borderColor: colors.inputBorder,
     borderRadius: radius.md,
     paddingHorizontal: wp(3.8),
     paddingVertical: hp(1.3),
   },
   selectorButtonText: {
-    fontSize: hp(1.6),
+    fontSize: fontSize.sm,
     fontWeight: '600',
-    color: '#1E293B',
+    color: colors.textDark,
   },
   dropdownOptionsList: {
     marginTop: hp(0.6),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.inputBorder,
     overflow: 'hidden',
     ...shadows.card,
   },
@@ -252,26 +252,26 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     paddingVertical: hp(1.2),
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: colors.borderDivider,
   },
   dropdownOptionItemActive: {
     backgroundColor: '#F0F9FF',
   },
   dropdownOptionText: {
-    fontSize: hp(1.5),
-    color: '#334155',
+    fontSize: fontSize.md,
+    color: colors.textBody,
     fontWeight: '500',
   },
   dropdownOptionTextActive: {
-    color: '#0284C7',
+    color: colors.textLink,
     fontWeight: '700',
   },
 
   // 3. Attendance Rate Snapshot Box
   rateSnapshotBox: {
-    backgroundColor: '#F8FCFE',
+    backgroundColor: colors.performanceTealBg,
     borderWidth: 1,
-    borderColor: '#E0F2FE',
+    borderColor: colors.performanceBorder,
     borderRadius: radius.lg,
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
@@ -283,7 +283,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(1.5),
   },
   rateBadge: {
-    backgroundColor: '#0D9488',
+    backgroundColor: colors.performanceTeal,
     width: wp(15),
     height: wp(14),
     borderRadius: radius.md,
@@ -292,8 +292,8 @@ export const styles = StyleSheet.create({
     marginRight: wp(3.5),
   },
   rateBadgeText: {
-    color: '#FFFFFF',
-    fontSize: hp(2.1),
+    color: colors.textWhite,
+    fontSize: fontSize.xxl,
     fontWeight: '800',
   },
   rateLabelRow: {
@@ -302,15 +302,15 @@ export const styles = StyleSheet.create({
     gap: wp(1.2),
   },
   rateLabel: {
-    fontSize: hp(1.15),
+    fontSize: fontSize.xs,
     fontWeight: '800',
-    color: '#0D9488',
+    color: colors.performanceTeal,
     letterSpacing: 0.5,
   },
   rateMonthTitle: {
-    fontSize: hp(2),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginTop: hp(0.2),
     letterSpacing: -0.2,
   },
@@ -324,10 +324,10 @@ export const styles = StyleSheet.create({
   workingDaysCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#EDF2F7',
+    borderColor: colors.borderLight,
     paddingHorizontal: wp(3.5),
     paddingVertical: hp(1.2),
     marginBottom: hp(1.5),
@@ -336,20 +336,20 @@ export const styles = StyleSheet.create({
     width: wp(9.5),
     height: wp(9.5),
     borderRadius: radius.sm,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.borderDivider,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: wp(3),
   },
   workingDaysLabel: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   workingDaysCount: {
-    fontSize: hp(2),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
 
   // Progress Bar
@@ -359,25 +359,25 @@ export const styles = StyleSheet.create({
     marginBottom: hp(0.6),
   },
   progressTextLeft: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   progressTextRight: {
-    fontSize: hp(1.2),
-    color: '#0D9488',
+    fontSize: fontSize.xs,
+    color: colors.performanceTeal,
     fontWeight: '700',
   },
   progressBarBg: {
     height: hp(0.9),
-    backgroundColor: '#E2E8F0',
+    backgroundColor: colors.inputBorder,
     borderRadius: hp(0.45),
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
     width: '100%',
-    backgroundColor: '#0D9488',
+    backgroundColor: colors.performanceTeal,
     borderRadius: hp(0.45),
   },
 
@@ -396,38 +396,38 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(3.8),
     paddingVertical: hp(1.6),
   },
-  // Specific card backgrounds & borders
+  // Specific card backgrounds & borders from centralized colors.status
   cardPresent: {
-    backgroundColor: '#F9FEFB',
-    borderColor: '#A7F3D0',
+    backgroundColor: colors.status.presentCardBg,
+    borderColor: colors.status.presentBorder,
   },
   cardLate: {
-    backgroundColor: '#FFFCFA',
-    borderColor: '#FED7AA',
+    backgroundColor: colors.status.lateCardBg,
+    borderColor: colors.status.lateBorder,
   },
   cardShortLeave: {
-    backgroundColor: '#FFFDF9',
-    borderColor: '#FDE68A',
+    backgroundColor: colors.status.shortLeaveCardBg,
+    borderColor: colors.status.shortLeaveBorder,
   },
   cardHalfLeave: {
-    backgroundColor: '#FBFEFF',
-    borderColor: '#BAE6FD',
+    backgroundColor: colors.status.halfLeaveCardBg,
+    borderColor: colors.status.halfLeaveBorder,
   },
   cardLeave: {
-    backgroundColor: '#FEFAFB',
-    borderColor: '#FECDD3',
+    backgroundColor: colors.status.leaveCardBg,
+    borderColor: colors.status.leaveBorder,
   },
   cardLeaveAccommodated: {
-    backgroundColor: '#FEFAFB',
-    borderColor: '#A7F3D0',
+    backgroundColor: colors.status.accommodatedCardBg,
+    borderColor: colors.status.accommodatedBorder,
   },
   cardPaidLeave: {
-    backgroundColor: '#FCFCFE',
-    borderColor: '#DDD6FE',
+    backgroundColor: colors.status.paidLeaveCardBg,
+    borderColor: colors.status.paidLeaveBorder,
   },
   cardRemainingPaidLeaves: {
-    backgroundColor: '#F9FBFF',
-    borderColor: '#C7D2FE',
+    backgroundColor: colors.status.remainingPaidLeavesCardBg,
+    borderColor: colors.status.remainingPaidLeavesBorder,
   },
 
   statCardRow: {
@@ -446,22 +446,22 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   statLabel: {
-    fontSize: hp(1.2),
+    fontSize: fontSize.xs,
     fontWeight: '800',
-    color: '#475569',
+    color: colors.textSlate,
     letterSpacing: 0.3,
     textTransform: 'uppercase',
   },
   statNumber: {
-    fontSize: hp(2.5),
+    fontSize: fontSize.xl,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginTop: hp(0.2),
     letterSpacing: -0.3,
   },
   statSubtext: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     marginTop: hp(0.8),
     fontWeight: '500',
     lineHeight: hp(1.6),
@@ -469,12 +469,12 @@ export const styles = StyleSheet.create({
 
   // 5. Attendance History Section
   historyCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     padding: wp(4.5),
     marginBottom: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     ...shadows.card,
   },
   historyHeader: {
@@ -487,18 +487,18 @@ export const styles = StyleSheet.create({
     width: wp(10),
     height: wp(10),
     borderRadius: radius.md,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.borderDivider,
     justifyContent: 'center',
     alignItems: 'center',
   },
   historyTitle: {
-    fontSize: hp(1.9),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   historySub: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     marginTop: hp(0.2),
   },
   historyBadgeRow: {
@@ -506,7 +506,7 @@ export const styles = StyleSheet.create({
   },
   recordPill: {
     alignSelf: 'flex-start',
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.borderDivider,
     borderRadius: radius.full,
     paddingHorizontal: wp(3),
     paddingVertical: hp(0.5),
@@ -515,35 +515,35 @@ export const styles = StyleSheet.create({
     gap: wp(1.5),
   },
   recordPillText: {
-    fontSize: hp(1.2),
+    fontSize: fontSize.xs,
     fontWeight: '600',
-    color: '#475569',
+    color: colors.textSlate,
   },
 
   // Attendance History Table
   tableContainer: {
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.inputBorder,
     borderRadius: radius.lg,
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
   },
   tableScrollContent: {
     minWidth: wp(185),
   },
   tableHeaderRow: {
     flexDirection: 'row',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.surfaceLight,
     paddingVertical: hp(1.4),
     paddingHorizontal: wp(3.5),
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: colors.inputBorder,
     alignItems: 'center',
   },
   tableHeaderCol: {
-    fontSize: hp(1.3),
+    fontSize: fontSize.xs,
     fontWeight: '700',
-    color: '#64748B',
+    color: colors.textSecondary,
   },
   colHeaderWithSort: {
     flexDirection: 'row',
@@ -555,11 +555,11 @@ export const styles = StyleSheet.create({
     paddingVertical: hp(1.5),
     paddingHorizontal: wp(3.5),
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: colors.borderDivider,
     alignItems: 'center',
   },
   tableRowEven: {
-    backgroundColor: '#FAFCFE',
+    backgroundColor: colors.surfaceRowAlternate,
   },
 
   // Column Widths
@@ -586,18 +586,18 @@ export const styles = StyleSheet.create({
   },
 
   tableTextDate: {
-    fontSize: hp(1.35),
+    fontSize: fontSize.xs,
     fontWeight: '600',
-    color: '#1E293B',
+    color: colors.textDark,
   },
   tableTextRegular: {
-    fontSize: hp(1.35),
+    fontSize: fontSize.xs,
     fontWeight: '500',
-    color: '#334155',
+    color: colors.textBody,
   },
   tableTextMuted: {
-    fontSize: hp(1.4),
-    color: '#94A3B8',
+    fontSize: fontSize.xs,
+    color: colors.textMuted,
     fontWeight: '500',
   },
 
@@ -615,36 +615,36 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   statusBadgePresent: {
-    backgroundColor: '#DCFCE7',
+    backgroundColor: colors.status.presentBadgeBg,
   },
   statusBadgeLate: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: colors.status.lateBadgeBg,
   },
   statusBadgeLeave: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.status.leaveBadgeBg,
   },
   statusBadgeText: {
-    fontSize: hp(1.2),
+    fontSize: fontSize.xs,
     fontWeight: '700',
   },
   statusTextPresent: {
-    color: '#15803D',
+    color: colors.status.presentBadgeText,
   },
   statusTextLate: {
-    color: '#B45309',
+    color: colors.status.lateBadgeText,
   },
   statusTextLeave: {
-    color: '#B91C1C',
+    color: colors.status.leaveBadgeText,
   },
 
   // 6. Attendance Rules Accordion Card
   rulesCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     paddingHorizontal: wp(4.5),
     paddingVertical: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
@@ -667,18 +667,18 @@ export const styles = StyleSheet.create({
     width: wp(10),
     height: wp(10),
     borderRadius: radius.md,
-    backgroundColor: '#E0F2FE',
+    backgroundColor: colors.performanceBorder,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rulesTitle: {
-    fontSize: hp(1.75),
+    fontSize: fontSize.md,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   rulesSub: {
-    fontSize: hp(1.2),
-    color: '#64748B',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     marginTop: hp(0.2),
     lineHeight: hp(1.7),
   },
@@ -686,7 +686,7 @@ export const styles = StyleSheet.create({
     marginTop: hp(2),
     paddingTop: hp(1.5),
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: colors.borderDivider,
   },
   timelineItemRow: {
     flexDirection: 'row',
@@ -701,21 +701,21 @@ export const styles = StyleSheet.create({
     width: wp(6.2),
     height: wp(6.2),
     borderRadius: radius.full,
-    backgroundColor: '#E0F2FE',
+    backgroundColor: colors.performanceBorder,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
   },
   timelineBadgeText: {
-    fontSize: hp(1.3),
+    fontSize: fontSize.xs,
     fontWeight: '700',
-    color: '#0284C7',
+    color: colors.textLink,
   },
   timelineLine: {
     width: 2,
     flex: 1,
     minHeight: hp(3.5),
-    backgroundColor: '#BAE6FD',
+    backgroundColor: colors.accentBorder,
     marginVertical: hp(0.4),
   },
   timelineContentCol: {
@@ -724,16 +724,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   timelineRuleText: {
-    fontSize: hp(1.35),
-    color: '#475569',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     lineHeight: hp(2.1),
     fontWeight: '400',
   },
   ruleItem: {
-    fontSize: hp(1.3),
-    color: '#475569',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     marginBottom: hp(0.8),
     lineHeight: hp(1.8),
   },
 });
-

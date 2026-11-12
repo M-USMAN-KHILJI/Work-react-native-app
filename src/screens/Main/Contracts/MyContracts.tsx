@@ -22,34 +22,22 @@ import {
   User,
   LogOut,
 } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
-import type { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { colors, hp, wp } from '../../../constants/display';
+import { useDrawer } from '../../../hooks';
 import { styles } from './style';
 
-type ContractsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Contracts'>;
-
 export const MyContractsScreen: React.FC = () => {
-  const navigation = useNavigation<ContractsNavigationProp>();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const handleLogout = async () => {
-    setIsDropdownOpen(false);
-    try {
-      await AsyncStorage.removeItem('@workpulse_remember_me');
-    } catch (e) {
-      // ignore
-    }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  };
+  const {
+    isDrawerOpen,
+    openDrawer,
+    closeDrawer,
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    handleLogout,
+    navigation,
+  } = useDrawer();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +48,7 @@ export const MyContractsScreen: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.menuButton}
-          onPress={() => setIsDrawerOpen(true)}
+          onPress={openDrawer}
         >
           <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
         </TouchableOpacity>
@@ -73,7 +61,7 @@ export const MyContractsScreen: React.FC = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.avatarCircle}
-            onPress={() => setIsDropdownOpen((prev) => !prev)}
+            onPress={toggleDropdown}
           >
             <Text style={styles.avatarText}>UK</Text>
           </TouchableOpacity>
@@ -83,14 +71,14 @@ export const MyContractsScreen: React.FC = () => {
             <>
               <Pressable
                 style={styles.dropdownBackdrop}
-                onPress={() => setIsDropdownOpen(false)}
+                onPress={closeDropdown}
               />
               <View style={styles.avatarDropdownMenu}>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.dropdownItem}
                   onPress={() => {
-                    setIsDropdownOpen(false);
+                    closeDropdown();
                     navigation.navigate('Profile');
                   }}
                 >
@@ -231,7 +219,7 @@ export const MyContractsScreen: React.FC = () => {
       {/* Drawer */}
       <CustomDrawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={closeDrawer}
         onLogout={handleLogout}
         activeRoute="Contracts"
       />

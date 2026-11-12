@@ -24,17 +24,28 @@ export const colors = {
   bgGradientMid: '#043249',
   bgGradientBottom: '#012133',
 
-  // Surfaces & Cards
+  // Surfaces & Backgrounds
+  appBackground: '#F3F7FA',
   cardBackground: '#FFFFFF',
   surfaceLight: '#F8FAFC',
+  surfaceCardMuted: '#FAFCFD',
+  surfaceRowAlternate: '#FAFCFE',
   inputBackground: '#EEF4F8',
   inputBorder: '#E2E8F0',
   inputBorderFocused: '#0096C7',
+  cardBorder: '#E8EFF4',
+  borderDivider: '#F1F5F9',
+  borderSubtle: '#EBF1F5',
+  borderLight: '#EDF2F7',
+  borderBox: '#EEF2F6',
 
   // Typography
   textPrimary: '#0F172A',
   textSecondary: '#64748B',
   textMuted: '#94A3B8',
+  textDark: '#1E293B',
+  textBody: '#334155',
+  textSlate: '#475569',
   textWhite: '#FFFFFF',
   textWhiteSecondary: '#C8E4EF',
   textLink: '#0284C7',
@@ -44,16 +55,88 @@ export const colors = {
   success: '#10B981',
   checkboxBorder: '#CBD5E1',
   checkboxActive: '#0096C7',
+
+  // Action Buttons (Check In / Check Out)
+  actionOcean: '#006D8F',
+  checkInSuccess: '#a6e0cc',
+  checkInSuccessText: '#065F46',
+  actionDisabledBg: '#F1F5F9',
+
+  // Teal Performance & Badges
+  performanceTeal: '#0D9488',
+  performanceTealBg: '#F8FCFE',
+  performanceBorder: '#E0F2FE',
+
+  // Attendance Metric & Status Card Colors (Preserving exact visual design)
+  status: {
+    // Present
+    presentCardBg: '#F9FEFB',
+    presentBorder: '#A7F3D0',
+    presentBadgeBg: '#DCFCE7',
+    presentBadgeText: '#15803D',
+
+    // Late
+    lateCardBg: '#FFFCFA',
+    lateBorder: '#FED7AA',
+    lateBadgeBg: '#FEF3C7',
+    lateBadgeText: '#B45309',
+
+    // Short Leave
+    shortLeaveCardBg: '#FFFDF9',
+    shortLeaveBorder: '#FDE68A',
+
+    // Half Leave
+    halfLeaveCardBg: '#FBFEFF',
+    halfLeaveBorder: '#BAE6FD',
+
+    // Leave (Absent)
+    leaveCardBg: '#FEFAFB',
+    leaveBorder: '#FECDD3',
+    leaveBadgeBg: '#FEE2E2',
+    leaveBadgeText: '#B91C1C',
+
+    // Accommodated / Flexible
+    accommodatedCardBg: '#FEFAFB',
+    accommodatedBorder: '#A7F3D0',
+
+    // Paid Leave
+    paidLeaveCardBg: '#FCFCFE',
+    paidLeaveBorder: '#DDD6FE',
+    paidLeaveBannerBg: '#F5F7FF',
+    paidLeaveBannerBorder: '#EEF2FF',
+    paidLeaveAccent: '#4F46E5',
+
+    // Remaining Paid Leaves
+    remainingPaidLeavesCardBg: '#F9FBFF',
+    remainingPaidLeavesBorder: '#C7D2FE',
+  },
+
+  // Modal Colors
+  modal: {
+    timeBoxBg: '#F0FDFA',
+    timeBoxBorder: '#99F6E4',
+    iconBoxBg: '#A7F3D0',
+  },
 } as const;
 
+/**
+ * Responsive fontSize calibrated in wp to match the exact mobile visual proportions:
+ * xs:   wp(2.9)  ~ 11.5px (subtitles, meta text, badge captions)
+ * sm:   wp(3.4)  ~ 13.5px (secondary text, labels, inputs)
+ * md:   wp(3.8)  ~ 15px   (body regular, dropdowns, buttons)
+ * lg:   wp(4.4)  ~ 17.5px (card titles, prominent labels)
+ * xl:   wp(5.2)  ~ 20.5px (section headers, dialog titles)
+ * xxl:  wp(6.0)  ~ 24px   (large card statistics, welcome headers)
+ * hero: wp(7.8)  ~ 31px   (main banners, large metric displays)
+ */
 export const fontSize = {
-  xs: hp(1.3), // ~11px
-  sm: hp(1.6), // ~13-14px
-  md: hp(1.9), // ~15-16px
-  lg: hp(2.2), // ~18px
-  xl: hp(2.6), // ~21px
-  xxl: hp(3.1), // ~25px
-  hero: hp(3.8), // ~30-32px
+  xs: wp(2.9),
+  sm: wp(3.4),
+  md: wp(3.8),
+  lg: wp(4.4),
+  xl: wp(5.2),
+  xxl: wp(6.0),
+  hero: wp(7.8),
 } as const;
 
 export const fontFamily = {
@@ -99,4 +182,3 @@ export const shadows = {
     elevation: 4,
   },
 } as const;
-

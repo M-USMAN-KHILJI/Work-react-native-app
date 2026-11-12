@@ -1,11 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { colors, fontSize, radius, shadows, hp, wp } from '../../../constants/display';
-import { Bold } from 'lucide-react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F7FA',
+    backgroundColor: colors.appBackground,
   },
   scrollContent: {
     paddingBottom: hp(4),
@@ -18,9 +17,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: wp(5),
     paddingVertical: hp(1.5),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderBottomWidth: 1,
-    borderBottomColor: '#EBF1F5',
+    borderBottomColor: colors.borderSubtle,
   },
   menuButton: {
     width: wp(10),
@@ -46,12 +45,12 @@ export const styles = StyleSheet.create({
     width: wp(9),
     height: wp(9),
     borderRadius: wp(4.5),
-    backgroundColor: '#0083B0',
+    backgroundColor: colors.primaryHover,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    color: '#FFFFFF',
+    color: colors.textWhite,
     fontSize: fontSize.sm,
     fontWeight: '700',
   },
@@ -70,10 +69,10 @@ export const styles = StyleSheet.create({
     top: hp(5.2),
     right: 0,
     width: wp(42),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     paddingVertical: hp(0.6),
     zIndex: 999,
     shadowColor: '#000',
@@ -91,13 +90,13 @@ export const styles = StyleSheet.create({
   },
   dropdownItemDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.borderDivider,
     marginHorizontal: wp(2),
   },
   dropdownItemText: {
-    fontSize: hp(1.5),
+    fontSize: fontSize.md,
     fontWeight: '600',
-    color: '#475569',
+    color: colors.textSecondary,
   },
 
   // Main Screen Padding
@@ -112,7 +111,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(5.5),
     paddingVertical: hp(2.5),
     marginBottom: hp(2),
-    // ...shadows.card,
   },
   heroDate: {
     color: 'rgba(255, 255, 255, 0.85)',
@@ -121,8 +119,8 @@ export const styles = StyleSheet.create({
     marginBottom: hp(0.8),
   },
   heroGreeting: {
-    color: '#FFFFFF',
-    fontSize: hp(2.8),
+    color: colors.textWhite,
+    fontSize: fontSize.hero,
     fontWeight: '800',
     lineHeight: hp(3.4),
     letterSpacing: -0.4,
@@ -150,12 +148,12 @@ export const styles = StyleSheet.create({
     gap: wp(1.5),
   },
   heroPillText: {
-    color: '#FFFFFF',
+    color: colors.textWhite,
     fontSize: fontSize.xs,
     fontWeight: '600',
   },
   attendanceButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.md,
     flexDirection: 'row',
     alignItems: 'center',
@@ -173,12 +171,12 @@ export const styles = StyleSheet.create({
 
   // Today's Attendance Card
   attendanceCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     padding: wp(4.5),
     marginBottom: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
     ...shadows.card,
   },
   attendanceCardHeader: {
@@ -188,14 +186,14 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2),
   },
   attendanceTitle: {
-    fontSize: hp(2.1),
+    fontSize: fontSize.xxl,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     letterSpacing: -0.3,
   },
   attendanceSubinfo: {
-    fontSize: hp(1.4),
-    color: '#64748B',
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
     marginTop: hp(0.4),
     fontWeight: '500',
   },
@@ -203,45 +201,44 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   currentTimeLabel: {
-    fontSize: hp(1.1),
+    fontSize: fontSize.xs,
     fontWeight: '700',
-    color: '#94A3B8',
+    color: colors.textMuted,
     letterSpacing: 0.6,
   },
   currentTimeBadge: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.surfaceLight,
     borderRadius: wp(3),
     paddingHorizontal: wp(2.1),
     paddingVertical: hp(0.5),
     marginTop: hp(0.5),
     marginRight: wp(1),
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.inputBorder,
   },
   currentTimeValue: {
-    fontSize: hp(1.3),
-    // fontWeight: '700',
-    color: '#1E293B',
+    fontSize: fontSize.xs,
+    color: colors.textDark,
     letterSpacing: 0.2,
   },
   statusBanner: {
     backgroundColor: '#F0F9FF',
     borderWidth: 1,
-    borderColor: '#BAE6FD',
+    borderColor: colors.accentBorder,
     borderRadius: radius.lg,
     paddingHorizontal: wp(2.7),
     paddingVertical: hp(0.5),
     marginBottom: hp(2),
   },
   statusBannerTitle: {
-    fontSize: hp(1.7),
+    fontSize: fontSize.md,
     fontWeight: '700',
-    color: '#0284C7',
+    color: colors.textLink,
     marginBottom: hp(0.4),
   },
   statusBannerSub: {
-    fontSize: hp(1.4),
-    color: '#64748B',
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
     lineHeight: hp(2),
   },
 
@@ -261,18 +258,18 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   checkInCardActiveState: {
-    backgroundColor: '#006D8F', // Ocean/teal when ready to check in
+    backgroundColor: colors.actionOcean,
     ...shadows.button,
   },
   checkInCardDisabled: {
-    backgroundColor: '#a6e0cc', // mint shade when checked in as requested
+    backgroundColor: colors.checkInSuccess,
   },
   checkOutCardActive: {
-    backgroundColor: '#006D8F', // deep cyan/ocean
+    backgroundColor: colors.actionOcean,
     ...shadows.button,
   },
   checkOutCardDisabled: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: colors.actionDisabledBg,
   },
   actionIconCircle: {
     width: wp(10),
@@ -284,8 +281,8 @@ export const styles = StyleSheet.create({
     marginBottom: hp(0.6),
   },
   actionCardText: {
-    color: '#FFFFFF',
-    fontSize: hp(1.45),
+    color: colors.textWhite,
+    fontSize: fontSize.sm,
     fontWeight: '700',
     letterSpacing: 0.1,
   },
@@ -311,7 +308,7 @@ export const styles = StyleSheet.create({
   },
   modalCard: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.cardTop,
     paddingHorizontal: wp(5.5),
     paddingTop: hp(2.5),
@@ -329,17 +326,17 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2),
   },
   modalTitle: {
-    fontSize: hp(2.2),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   modalCloseBtn: {
     padding: wp(1),
   },
   modalTimeBox: {
-    backgroundColor: '#F0FDFA',
+    backgroundColor: colors.modal.timeBoxBg,
     borderWidth: 1,
-    borderColor: '#99F6E4',
+    borderColor: colors.modal.timeBoxBorder,
     borderRadius: radius.xl,
     paddingVertical: hp(1.8),
     paddingHorizontal: wp(4),
@@ -352,7 +349,7 @@ export const styles = StyleSheet.create({
     width: wp(11),
     height: wp(11),
     borderRadius: radius.lg,
-    backgroundColor: '#A7F3D0',
+    backgroundColor: colors.modal.iconBoxBg,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -360,21 +357,21 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   modalTimeLabel: {
-    fontSize: hp(1.2),
-    color: '#0D9488',
+    fontSize: fontSize.xs,
+    color: colors.performanceTeal,
     fontWeight: '600',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
   modalTimeValue: {
-    fontSize: hp(2.2),
+    fontSize: fontSize.lg,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginTop: hp(0.2),
   },
   modalPromptText: {
-    fontSize: hp(1.35),
-    color: '#475569',
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
     lineHeight: hp(2),
     marginBottom: hp(2.5),
   },
@@ -388,35 +385,35 @@ export const styles = StyleSheet.create({
     paddingVertical: hp(1.5),
     borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: colors.checkboxBorder,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.surfaceLight,
   },
   modalCancelText: {
-    fontSize: hp(1.5),
+    fontSize: fontSize.md,
     fontWeight: '700',
-    color: '#475569',
+    color: colors.textSecondary,
   },
   modalConfirmBtn: {
     flex: 1.5,
     paddingVertical: hp(1.5),
     borderRadius: radius.xl,
-    backgroundColor: '#a6e0cc', // exactly styled mint #a6e0cc
+    backgroundColor: colors.checkInSuccess,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     gap: wp(2),
-    shadowColor: '#059669',
+    shadowColor: colors.success,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 3,
   },
   modalConfirmText: {
-    fontSize: hp(1.5),
+    fontSize: fontSize.md,
     fontWeight: '800',
-    color: '#065F46',
+    color: colors.checkInSuccessText,
   },
 
   // Metric Cards (Check In, Check Out, Working Hours, Status)
@@ -448,27 +445,27 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   metricLabel: {
-    fontSize: hp(1),
+    fontSize: fontSize.xs,
     fontWeight: '700',
-    color: '#64748B',
+    color: colors.textSecondary,
     letterSpacing: 0.6,
   },
   metricValue: {
-    fontSize: hp(2),
+    fontSize: fontSize.md,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginTop: hp(0.2),
     letterSpacing: -0.3,
   },
 
   // Section Cards: This Month
   sectionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     padding: wp(5),
     marginBottom: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
@@ -477,30 +474,30 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2),
   },
   sectionPreTitle: {
-    fontSize: hp(1.2),
+    fontSize: fontSize.xs,
     fontWeight: 'bold',
     color: colors.primaryHover,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
   sectionMainTitle: {
-    fontSize: hp(1.8),
+    fontSize: fontSize.md,
     fontWeight: '800',
     color: colors.textPrimary,
     marginTop: hp(0.3),
     letterSpacing: -0.3,
   },
   viewReportLink: {
-    fontSize: hp(1.3),
+    fontSize: fontSize.xs,
     fontWeight: '700',
     color: colors.textLink,
   },
 
   // Attendance Rate Snapshot Box
   rateSnapshotBox: {
-    backgroundColor: '#F8FCFE',
+    backgroundColor: colors.performanceTealBg,
     borderWidth: 1,
-    borderColor: '#E0F2FE',
+    borderColor: colors.performanceBorder,
     borderRadius: radius.lg,
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
@@ -512,7 +509,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(1.5),
   },
   rateBadge: {
-    backgroundColor: '#0D9488',
+    backgroundColor: colors.performanceTeal,
     width: wp(14),
     height: wp(13),
     borderRadius: radius.md,
@@ -521,8 +518,8 @@ export const styles = StyleSheet.create({
     marginRight: wp(3),
   },
   rateBadgeText: {
-    color: '#FFFFFF',
-    fontSize: hp(2),
+    color: colors.textWhite,
+    fontSize: fontSize.md,
     fontWeight: '800',
     letterSpacing: -0.3,
   },
@@ -532,9 +529,9 @@ export const styles = StyleSheet.create({
     gap: wp(1.2),
   },
   rateLabel: {
-    fontSize: hp(1.15),
+    fontSize: fontSize.xs,
     fontWeight: '800',
-    color: '#0D9488',
+    color: colors.performanceTeal,
     letterSpacing: 0.5,
   },
   rateSub: {
@@ -544,14 +541,14 @@ export const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: hp(0.9),
-    backgroundColor: '#E2E8F0',
+    backgroundColor: colors.inputBorder,
     borderRadius: hp(0.45),
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
     width: '100%',
-    backgroundColor: '#0D9488',
+    backgroundColor: colors.performanceTeal,
     borderRadius: hp(0.45),
   },
 
@@ -567,38 +564,38 @@ export const styles = StyleSheet.create({
     paddingVertical: hp(1),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FAFCFD',
+    backgroundColor: colors.surfaceCardMuted,
     borderRadius: radius.lg,
     borderWidth: 1.2,
-    borderColor: '#EDF3F7',
+    borderColor: colors.borderLight,
   },
   statsNumber: {
-    fontSize: hp(2.5),
+    fontSize: fontSize.xl,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   statsLabel: {
-    fontSize: hp(1.4),
-    color: '#64748B',
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
     marginTop: hp(0.5),
     fontWeight: '600',
   },
 
   // Paid Leaves Section
   paidLeavesCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.xl,
     overflow: 'hidden',
     marginBottom: hp(2),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
+    borderColor: colors.cardBorder,
   },
   paidLeavesHeaderBanner: {
-    backgroundColor: '#F5F7FF',
+    backgroundColor: colors.status.paidLeaveBannerBg,
     paddingHorizontal: wp(5),
     paddingVertical: hp(1.8),
     borderBottomWidth: 1,
-    borderBottomColor: '#EEF2FF',
+    borderBottomColor: colors.status.paidLeaveBannerBorder,
   },
   leavesHeaderTitleRow: {
     flexDirection: 'row',
@@ -606,9 +603,9 @@ export const styles = StyleSheet.create({
     gap: wp(2),
   },
   leavesHeaderTitle: {
-    fontSize: hp(1.5),
+    fontSize: fontSize.md,
     fontWeight: '700',
-    color: '#4F46E5',
+    color: colors.status.paidLeaveAccent,
     letterSpacing: -0.2,
   },
   paidLeavesBody: {
@@ -617,14 +614,14 @@ export const styles = StyleSheet.create({
     paddingBottom: hp(2.5),
   },
   bigLeaveNumber: {
-    fontSize: hp(4),
+    fontSize: fontSize.hero,
     fontWeight: '800',
-    color: '#0F172A',
+    color: colors.textPrimary,
     lineHeight: hp(4.5),
   },
   bigLeaveSub: {
-    fontSize: hp(1.4),
-    color: '#64748B',
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
     marginTop: hp(0.5),
     marginBottom: hp(2.2),
     fontWeight: '500',
@@ -634,7 +631,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: hp(0.8),
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: colors.borderDivider,
   },
   leaveDetailLabel: {
     fontSize: fontSize.xs,
@@ -648,12 +645,11 @@ export const styles = StyleSheet.create({
 
   // Quick Links
   quickLinksCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBackground,
     borderRadius: radius.lg,
     padding: wp(4.5),
     borderWidth: 1,
-    borderColor: '#E8EFF4',
-    // ...shadows.card,
+    borderColor: colors.cardBorder,
   },
   quickLinksHeaderRow: {
     flexDirection: 'row',
@@ -675,9 +671,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FAFCFE',
+    backgroundColor: colors.surfaceRowAlternate,
     borderWidth: 1,
-    borderColor: '#EBF1F5',
+    borderColor: colors.borderSubtle,
     borderRadius: radius.md,
     paddingHorizontal: wp(3.5),
     paddingVertical: hp(1.4),
@@ -693,4 +689,3 @@ export const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 });
-
