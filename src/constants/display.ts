@@ -2,7 +2,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Platform } from 'react-native';
 
 export { wp, hp };
 
@@ -157,10 +156,21 @@ export const fontSize = {
 } as const;
 
 export const fontFamily = {
-  regular: Platform.select({ ios: 'System', android: 'sans-serif' }),
-  medium: Platform.select({ ios: 'System', android: 'sans-serif-medium' }),
-  semiBold: Platform.select({ ios: 'System', android: 'sans-serif-medium' }),
-  bold: Platform.select({ ios: 'System', android: 'sans-serif-bold' }),
+  thin: 'Poppins-Thin',
+  extraLight: 'Poppins-ExtraLight',
+  light: 'Poppins-Light',
+  regular: 'Poppins-Regular',
+  medium: 'Poppins-Medium',
+  semiBold: 'Poppins-SemiBold',
+  bold: 'Poppins-Bold',
+  extraBold: 'Poppins-ExtraBold',
+  black: 'Poppins-Black',
+  // Italic variants
+  italic: 'Poppins-Italic',
+  lightItalic: 'Poppins-LightItalic',
+  mediumItalic: 'Poppins-MediumItalic',
+  semiBoldItalic: 'Poppins-SemiBoldItalic',
+  boldItalic: 'Poppins-BoldItalic',
 } as const;
 
 export const radius = {
