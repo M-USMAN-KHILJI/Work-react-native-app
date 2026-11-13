@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/Stacknavigation';
+import { useAppDispatch, logout } from '../redux';
 
 /**
  * useDrawer — manages drawer open state, avatar dropdown state, and shared logout logic.
@@ -10,6 +10,7 @@ import type { RootStackParamList } from '../navigation/Stacknavigation';
  */
 export function useDrawer() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const dispatch = useAppDispatch();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -18,13 +19,10 @@ export function useDrawer() {
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const closeDropdown = () => setIsDropdownOpen(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsDropdownOpen(false);
-    try {
-      await AsyncStorage.removeItem('@workpulse_remember_me');
-    } catch (e) {
-      // ignore
-    }
+    // Dispatch Redux logout action
+    dispatch(logout());
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
@@ -44,4 +42,3 @@ export function useDrawer() {
     navigation,
   };
 }
-

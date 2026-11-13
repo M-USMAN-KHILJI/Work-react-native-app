@@ -42,6 +42,7 @@ import { useDrawer, useCurrentTime, useAttendance } from '../../../hooks';
 
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
+import { useAppDispatch, useAppSelector, markLoginToastShown } from '../../../redux';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -55,6 +56,10 @@ export const DashboardScreen: React.FC = () => {
     navigation,
   } = useDrawer();
 
+  const dispatch = useAppDispatch();
+  const hasShownLoginToast = useAppSelector((state) => state.auth.hasShownLoginToast);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const rememberMe = useAppSelector((state) => state.auth.rememberMe);
   const currentTime = useCurrentTime();
   const {
     isCheckedIn,
@@ -182,15 +187,18 @@ export const DashboardScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    // Show light blue success toast on login
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
-      text2: 'You have logged in successfully.',
-      position: 'top',
-      visibilityTime: 3000,
-    });
-  }, []);
+    // Show login toast only once upon logging in or app startup when remembered
+    if (!hasShownLoginToast && (isAuthenticated || rememberMe)) {
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: 'You have logged in successfully.',
+        position: 'top',
+        visibilityTime: 3000,
+      });
+      dispatch(markLoginToastShown());
+    }
+  }, [hasShownLoginToast, isAuthenticated, rememberMe, dispatch]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -286,7 +294,11 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </View>
 
-            <TouchableOpacity activeOpacity={0.85} style={styles.attendanceButton}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              style={styles.attendanceButton}
+              onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
+            >
               <Calendar size={wp(4.2)} color={colors.textPrimary} />
               <Text style={styles.attendanceButtonText}>Attendance</Text>
             </TouchableOpacity>
@@ -532,7 +544,15 @@ export const DashboardScreen: React.FC = () => {
                 <Text style={styles.sectionMainTitle}>{currentMonthYear}</Text>
               </View>
 
-              <TouchableOpacity activeOpacity={0.7}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() =>
+                  navigation.navigate('Attendance', {
+                    scrollToHistory: true,
+                    fromDashboard: true,
+                  })
+                }
+              >
                 <Text style={styles.viewReportLink}>View report →</Text>
               </TouchableOpacity>
             </View>
@@ -639,7 +659,7 @@ export const DashboardScreen: React.FC = () => {
             <TouchableOpacity
               activeOpacity={0.7}
               style={styles.quickLinkItem}
-              onPress={() => navigation.navigate('Attendance')}
+              onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
             >
               <View style={styles.quickLinkLeft}>
                 <Calendar size={wp(4.2)} color="#0D9488" />

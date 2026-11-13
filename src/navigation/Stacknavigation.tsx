@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SplashScreen } from '../screens/Splash/SplashScreen';
 import { LoginScreen } from '../screens/Auth/Login/login';
 import { DashboardScreen } from '../screens/Main/Dashboard/Dashbaord';
 import { MyAttendanceScreen } from '../screens/Main/Attendance/Myattendance';
 import { MyContractsScreen } from '../screens/Main/Contracts/MyContracts';
 import { MyProfileScreen } from '../screens/Main/Profile/MyProfile';
-import { colors } from '../constants/display';
 
 export type RootStackParamList = {
+  Splash: undefined;
   Login: undefined;
   Dashboard: undefined;
-  Attendance: undefined;
+  Attendance: { scrollToHistory?: boolean; fromDashboard?: boolean } | undefined;
   Contracts: undefined;
   Profile: undefined;
 };
@@ -21,42 +20,16 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const StackNavigation: React.FC = () => {
-  const [initialRoute, setInitialRoute] = useState<'Login' | 'Dashboard' | null>(null);
-
-  useEffect(() => {
-    const checkRememberMe = async () => {
-      try {
-        const remembered = await AsyncStorage.getItem('@workpulse_remember_me');
-        if (remembered === 'true') {
-          setInitialRoute('Dashboard');
-        } else {
-          setInitialRoute('Login');
-        }
-      } catch (e) {
-        setInitialRoute('Login');
-      }
-    };
-
-    checkRememberMe();
-  }, []);
-
-  if (!initialRoute) {
-    return (
-      <View style={{ flex: 1, backgroundColor: colors.bgGradientMid, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0096C7" />
-      </View>
-    );
-  }
-
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={initialRoute}
+        initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
           animation: 'fade',
         }}
       >
+        <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="Attendance" component={MyAttendanceScreen} />

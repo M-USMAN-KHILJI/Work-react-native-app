@@ -9,8 +9,6 @@ import {
   Pressable,
   Dimensions,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -24,8 +22,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './Stacknavigation';
 import { WorkPulseLogo } from '../components/WorkPulseLogo';
 import { hp, wp, radius } from '../constants/display';
+import { useAppSelector } from '../redux';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const DRAWER_WIDTH = wp(78);
 
 interface CustomDrawerProps {
@@ -41,8 +39,9 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   onLogout,
   activeRoute = 'Dashboard',
 }) => {
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const user = useAppSelector((state) => state.auth.user);
+
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
@@ -92,161 +91,161 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         style={[
           styles.drawerContainer,
           {
-            paddingTop: insets.top + hp(1.5),
-            paddingBottom: Math.max(insets.bottom, hp(2)),
             transform: [{ translateX: slideAnim }],
           },
         ]}
       >
-        {/* 1. Header with WorkPulse Logo & Subtitle */}
-        <View style={styles.headerSection}>
-          <WorkPulseLogo
-            size={wp(11)}
-            variant="horizontal-dark"
-            subtitle="Employee Portal"
-          />
-        </View>
+        <SafeAreaView style={styles.safeArea}>
+          {/* 1. Header with WorkPulse Logo & Subtitle */}
+          <View style={styles.headerSection}>
+            <WorkPulseLogo
+              size={wp(11)}
+              variant="horizontal-dark"
+              subtitle="Employee Portal"
+            />
+          </View>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          style={styles.menuScroll}
-        >
-          {/* 2. MAIN MENU Group */}
-          <Text style={styles.groupHeading}>MAIN MENU</Text>
-
-          {/* Dashboard Item */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.menuItem, activeRoute === 'Dashboard' && styles.menuItemActive]}
-            onPress={() => {
-              onClose();
-              if (activeRoute !== 'Dashboard') {
-                navigation.navigate('Dashboard');
-              }
-            }}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            style={styles.menuScroll}
           >
-            {activeRoute === 'Dashboard' && <View style={styles.activePillIndicator} />}
-            <View style={[styles.menuIconContainer, styles.dashboardIconBg]}>
-              <LayoutDashboard size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
-            </View>
-            <Text
-              style={[
-                styles.menuItemText,
-                activeRoute === 'Dashboard' && styles.menuItemTextActive,
-              ]}
+            {/* 2. MAIN MENU Group */}
+            <Text style={styles.groupHeading}>MAIN MENU</Text>
+
+            {/* Dashboard Item */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.menuItem, activeRoute === 'Dashboard' && styles.menuItemActive]}
+              onPress={() => {
+                onClose();
+                if (activeRoute !== 'Dashboard') {
+                  navigation.navigate('Dashboard');
+                }
+              }}
             >
-              Dashboard
-            </Text>
-          </TouchableOpacity>
-
-          {/* My Attendance Item */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={[styles.menuItem, activeRoute === 'Attendance' && styles.menuItemActive]}
-            onPress={() => {
-              onClose();
-              if (activeRoute !== 'Attendance') {
-                navigation.navigate('Attendance');
-              }
-            }}
-          >
-            {activeRoute === 'Attendance' && <View style={styles.activePillIndicator} />}
-            <View style={[styles.menuIconContainer, styles.attendanceIconBg]}>
-              <CalendarCheck size={wp(5.2)} color="#10B981" strokeWidth={2.3} />
-            </View>
-            <Text
-              style={[
-                styles.menuItemText,
-                activeRoute === 'Attendance' && styles.menuItemTextActive,
-              ]}
-            >
-              My Attendance
-            </Text>
-          </TouchableOpacity>
-
-          {/* My Contracts Item */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={[styles.menuItem, activeRoute === 'Contracts' && styles.menuItemActive]}
-            onPress={() => {
-              onClose();
-              if (activeRoute !== 'Contracts') {
-                navigation.navigate('Contracts');
-              }
-            }}
-          >
-            {activeRoute === 'Contracts' && <View style={styles.activePillIndicator} />}
-            <View style={[styles.menuIconContainer, styles.contractIconBg]}>
-              <FileSpreadsheet size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
-            </View>
-            <Text
-              style={[
-                styles.menuItemText,
-                activeRoute === 'Contracts' && styles.menuItemTextActive,
-              ]}
-            >
-              My Contracts
-            </Text>
-          </TouchableOpacity>
-
-          {/* Divider */}
-          <View style={styles.menuDivider} />
-
-          {/* 3. ACCOUNT Group */}
-          <Text style={styles.groupHeading}>ACCOUNT</Text>
-
-          {/* My Profile Item */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={[styles.menuItem, activeRoute === 'Profile' && styles.menuItemActive]}
-            onPress={() => {
-              onClose();
-              if (activeRoute !== 'Profile') {
-                navigation.navigate('Profile');
-              }
-            }}
-          >
-            {activeRoute === 'Profile' && <View style={styles.activePillIndicator} />}
-            <View style={[styles.menuIconContainer, styles.profileIconBg]}>
-              <User size={wp(5.2)} color="#8B5CF6" strokeWidth={2.3} />
-            </View>
-            <Text
-              style={[
-                styles.menuItemText,
-                activeRoute === 'Profile' && styles.menuItemTextActive,
-              ]}
-            >
-              My Profile
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-
-        {/* 4. Bottom User Profile Card */}
-        <View style={styles.bottomCardWrapper}>
-          <View style={styles.bottomCard}>
-            <View style={styles.userAvatarBox}>
-              <Text style={styles.userAvatarText}>U</Text>
-            </View>
-
-            <View style={styles.userInfoCol}>
-              <Text style={styles.userName} numberOfLines={1}>
-                Usman Khurram
+              {activeRoute === 'Dashboard' && <View style={styles.activePillIndicator} />}
+              <View style={[styles.menuIconContainer, styles.dashboardIconBg]}>
+                <LayoutDashboard size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
+              </View>
+              <Text
+                style={[
+                  styles.menuItemText,
+                  activeRoute === 'Dashboard' && styles.menuItemTextActive,
+                ]}
+              >
+                Dashboard
               </Text>
-              <Text style={styles.userRole} numberOfLines={1}>
-                Employee Portal
-              </Text>
-            </View>
+            </TouchableOpacity>
 
+            {/* My Attendance Item */}
             <TouchableOpacity
               activeOpacity={0.7}
-              style={styles.logoutButton}
-              onPress={onLogout}
+              style={[styles.menuItem, activeRoute === 'Attendance' && styles.menuItemActive]}
+              onPress={() => {
+                onClose();
+                if (activeRoute !== 'Attendance') {
+                  navigation.navigate('Attendance', { fromDashboard: false });
+                }
+              }}
             >
-              <LogOut size={wp(5)} color="#DC2626" strokeWidth={2.3} />
+              {activeRoute === 'Attendance' && <View style={styles.activePillIndicator} />}
+              <View style={[styles.menuIconContainer, styles.attendanceIconBg]}>
+                <CalendarCheck size={wp(5.2)} color="#10B981" strokeWidth={2.3} />
+              </View>
+              <Text
+                style={[
+                  styles.menuItemText,
+                  activeRoute === 'Attendance' && styles.menuItemTextActive,
+                ]}
+              >
+                My Attendance
+              </Text>
             </TouchableOpacity>
+
+            {/* My Contracts Item */}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={[styles.menuItem, activeRoute === 'Contracts' && styles.menuItemActive]}
+              onPress={() => {
+                onClose();
+                if (activeRoute !== 'Contracts') {
+                  navigation.navigate('Contracts');
+                }
+              }}
+            >
+              {activeRoute === 'Contracts' && <View style={styles.activePillIndicator} />}
+              <View style={[styles.menuIconContainer, styles.contractIconBg]}>
+                <FileSpreadsheet size={wp(5.2)} color="#0284C7" strokeWidth={2.3} />
+              </View>
+              <Text
+                style={[
+                  styles.menuItemText,
+                  activeRoute === 'Contracts' && styles.menuItemTextActive,
+                ]}
+              >
+                My Contracts
+              </Text>
+            </TouchableOpacity>
+
+            {/* Divider */}
+            <View style={styles.menuDivider} />
+
+            {/* 3. ACCOUNT Group */}
+            <Text style={styles.groupHeading}>ACCOUNT</Text>
+
+            {/* My Profile Item */}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={[styles.menuItem, activeRoute === 'Profile' && styles.menuItemActive]}
+              onPress={() => {
+                onClose();
+                if (activeRoute !== 'Profile') {
+                  navigation.navigate('Profile');
+                }
+              }}
+            >
+              {activeRoute === 'Profile' && <View style={styles.activePillIndicator} />}
+              <View style={[styles.menuIconContainer, styles.profileIconBg]}>
+                <User size={wp(5.2)} color="#8B5CF6" strokeWidth={2.3} />
+              </View>
+              <Text
+                style={[
+                  styles.menuItemText,
+                  activeRoute === 'Profile' && styles.menuItemTextActive,
+                ]}
+              >
+                My Profile
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+
+          {/* 4. Bottom User Profile Card */}
+          <View style={styles.bottomCardWrapper}>
+            <View style={styles.bottomCard}>
+              <View style={styles.userAvatarBox}>
+                <Text style={styles.userAvatarText}>{user?.initials || 'U'}</Text>
+              </View>
+
+              <View style={styles.userInfoCol}>
+                <Text style={styles.userName} numberOfLines={1}>
+                  {user?.name || 'Usman Khurram'}
+                </Text>
+                <Text style={styles.userRole} numberOfLines={1}>
+                  {user?.role || 'Employee Portal'}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.logoutButton}
+                onPress={onLogout}
+              >
+                <LogOut size={wp(5)} color="#DC2626" strokeWidth={2.3} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Animated.View>
     </View>
   );
@@ -275,6 +274,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 16,
     elevation: 20,
+  },
+  safeArea: {
+    flex: 1,
   },
   headerSection: {
     paddingHorizontal: wp(5.5),

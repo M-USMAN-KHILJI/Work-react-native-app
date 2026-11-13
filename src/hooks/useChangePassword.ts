@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const USER_PASSWORD_KEY = '@workpulse_user_password';
-const DEFAULT_PASSWORD = '1234'; // Default password from Login screen
+import { useAppDispatch, useAppSelector, updatePasswordInState } from '../redux';
 
 export interface PasswordValidationResult {
   currentPasswordError?: string;
@@ -11,6 +8,9 @@ export interface PasswordValidationResult {
 }
 
 export function useChangePassword() {
+  const dispatch = useAppDispatch();
+  const savedPassword = useAppSelector((state) => state.auth.passwordHash);
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -34,10 +34,7 @@ export function useChangePassword() {
   const updatePassword = async (): Promise<{ success: boolean; message: string }> => {
     const newErrors: PasswordValidationResult = {};
 
-    // Get current stored password
-    const savedPassword = (await AsyncStorage.getItem(USER_PASSWORD_KEY)) || DEFAULT_PASSWORD;
-
-    // 1. Verify Current Password
+    // 1. Verify Current Password against Redux state
     if (!currentPassword) {
       newErrors.currentPasswordError = 'Please enter your current password.';
     } else if (currentPassword !== savedPassword) {
@@ -69,14 +66,15 @@ export function useChangePassword() {
 
     setIsUpdating(true);
     try {
-      await AsyncStorage.setItem(USER_PASSWORD_KEY, newPassword);
+      // Dispatch action to update password in Redux
+      dispatch(updatePasswordInState(newPassword));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setErrors({});
       setIsUpdating(false);
       return { success: true, message: 'Password updated successfully!' };
-    } catch (e) {
+    } catch {
       setIsUpdating(false);
       return { success: false, message: 'Failed to save password. Please try again.' };
     }
@@ -101,4 +99,3 @@ export function useChangePassword() {
     updatePassword,
   };
 }
-

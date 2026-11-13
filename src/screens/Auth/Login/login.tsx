@@ -3,13 +3,11 @@ import {
   View,
   Platform,
   StatusBar,
-  Alert,
   KeyboardAvoidingView,
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -31,16 +29,21 @@ import {
 } from '../../../components';
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
+import { useAppDispatch, useAppSelector, loginSuccess } from '../../../redux';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<React.ElementRef<typeof ScrollView>>(null);
 
-  const [email, setEmail] = useState<string>('admin@gmail.com');
+  const dispatch = useAppDispatch();
+  const savedEmailFromRedux = useAppSelector((state) => state.auth.savedEmail);
+  const currentPasswordHash = useAppSelector((state) => state.auth.passwordHash);
+
+  const [email, setEmail] = useState<string>(savedEmailFromRedux || 'admin@gmail.com');
   const [password, setPassword] = useState<string>('1234');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(Boolean(savedEmailFromRedux));
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -48,19 +51,11 @@ export const LoginScreen: React.FC = () => {
   const [isToastVisible, setIsToastVisible] = useState(false);
 
   useEffect(() => {
-    const loadSavedEmail = async () => {
-      try {
-        const savedEmail = await AsyncStorage.getItem('@workpulse_saved_email');
-        if (savedEmail) {
-          setEmail(savedEmail);
-          setRememberMe(true);
-        }
-      } catch (e) {
-        // ignore
-      }
-    };
-    loadSavedEmail();
-  }, []);
+    if (savedEmailFromRedux) {
+      setEmail(savedEmailFromRedux);
+      setRememberMe(true);
+    }
+  }, [savedEmailFromRedux]);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -109,20 +104,20 @@ export const LoginScreen: React.FC = () => {
   const handleSignIn = async () => {
     if (!validate()) return;
 
-    if (email.trim().toLowerCase() === 'admin@gmail.com' && password === '1234') {
+    // Check credentials against Redux store
+    const isValidEmail = email.trim().toLowerCase() === 'admin@gmail.com';
+    const isValidPassword = password === currentPasswordHash || password === '1234';
+
+    if (isValidEmail && isValidPassword) {
       setLoading(true);
 
-      try {
-        if (rememberMe) {
-          await AsyncStorage.setItem('@workpulse_remember_me', 'true');
-          await AsyncStorage.setItem('@workpulse_saved_email', email.trim());
-        } else {
-          await AsyncStorage.removeItem('@workpulse_remember_me');
-          await AsyncStorage.removeItem('@workpulse_saved_email');
-        }
-      } catch (e) {
-        // ignore
-      }
+      // Dispatch Redux loginSuccess
+      dispatch(
+        loginSuccess({
+          email: email.trim(),
+          rememberMe,
+        })
+      );
 
       setTimeout(() => {
         setLoading(false);

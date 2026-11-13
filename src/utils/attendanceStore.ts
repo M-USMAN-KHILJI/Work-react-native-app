@@ -1,10 +1,16 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   DayAttendanceResult,
   calculateDayAttendance,
   evaluateCheckInEligibility,
   evaluateCheckOutEligibility,
 } from './attendanceRules';
+import { store } from '../redux/store';
+import {
+  checkInAction,
+  checkOutAction,
+  setAttendanceHistory,
+  setActiveSession,
+} from '../redux/slices/attendanceSlice';
 
 export interface StoredAttendanceRecord {
   date: string; // 'YYYY-MM-DD'
@@ -17,9 +23,6 @@ export interface StoredAttendanceRecord {
   lateByFormatted: string;
   statuses: Array<'Present' | 'Late' | 'Half Leave' | 'Short Leave' | 'Leave'>;
 }
-
-const STORAGE_KEY = '@workpulse_attendance_history_v2';
-const ACTIVE_SESSION_KEY = '@workpulse_active_attendance_session';
 
 export const INITIAL_MOCK_HISTORY: StoredAttendanceRecord[] = [
   {
@@ -102,45 +105,19 @@ export const INITIAL_MOCK_HISTORY: StoredAttendanceRecord[] = [
 ];
 
 export async function getAttendanceHistory(): Promise<StoredAttendanceRecord[]> {
-  try {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_MOCK_HISTORY));
-      return INITIAL_MOCK_HISTORY;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_MOCK_HISTORY;
-  }
+  return store.getState().attendance.history;
 }
 
 export async function saveAttendanceHistory(records: StoredAttendanceRecord[]): Promise<void> {
-  try {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-  } catch (e) {
-    // ignore
-  }
+  store.dispatch(setAttendanceHistory(records));
 }
 
 export async function getActiveSession(): Promise<{ checkInISO: string } | null> {
-  try {
-    const raw = await AsyncStorage.getItem(ACTIVE_SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  return store.getState().attendance.activeSession;
 }
 
 export async function saveActiveSession(session: { checkInISO: string } | null): Promise<void> {
-  try {
-    if (session) {
-      await AsyncStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(session));
-    } else {
-      await AsyncStorage.removeItem(ACTIVE_SESSION_KEY);
-    }
-  } catch {
-    // ignore
-  }
+  store.dispatch(setActiveSession(session));
 }
 
 /**
@@ -161,8 +138,6 @@ export async function performCheckIn(
   }
 
   const checkInISO = date.toISOString();
-  await saveActiveSession({ checkInISO });
-
   const dateStr = date.toISOString().split('T')[0];
   const dayResult = calculateDayAttendance(date, null);
 
@@ -178,15 +153,8 @@ export async function performCheckIn(
     statuses: dayResult.statuses,
   };
 
-  const history = await getAttendanceHistory();
-  const existingIdx = history.findIndex((h) => h.date === dateStr);
-  if (existingIdx >= 0) {
-    history[existingIdx] = newRecord;
-  } else {
-    history.unshift(newRecord);
-  }
-
-  await saveAttendanceHistory(history);
+  // Dispatch Redux action
+  store.dispatch(checkInAction({ record: newRecord, checkInISO }));
 
   let successMsg = 'Checked in successfully!';
   if (eligibility.isLate) {
@@ -211,7 +179,7 @@ export async function performCheckOut(
   userLocation?: { latitude: number; longitude: number },
   isWFH: boolean = false
 ): Promise<{ success: boolean; message: string; record?: StoredAttendanceRecord }> {
-  const activeSession = await getActiveSession();
+  const activeSession = store.getState().attendance.activeSession;
   if (!activeSession) {
     return {
       success: false,
@@ -231,7 +199,6 @@ export async function performCheckOut(
 
   const checkOutISO = date.toISOString();
   const dateStr = checkInDate.toISOString().split('T')[0];
-
   const dayResult = calculateDayAttendance(checkInDate, date);
 
   const updatedRecord: StoredAttendanceRecord = {
@@ -246,16 +213,8 @@ export async function performCheckOut(
     statuses: dayResult.statuses,
   };
 
-  const history = await getAttendanceHistory();
-  const existingIdx = history.findIndex((h) => h.date === dateStr);
-  if (existingIdx >= 0) {
-    history[existingIdx] = updatedRecord;
-  } else {
-    history.unshift(updatedRecord);
-  }
-
-  await saveAttendanceHistory(history);
-  await saveActiveSession(null);
+  // Dispatch Redux action
+  store.dispatch(checkOutAction({ record: updatedRecord }));
 
   const statusText = dayResult.statuses.join(', ');
   return {
@@ -264,4 +223,3 @@ export async function performCheckOut(
     record: updatedRecord,
   };
 }
-

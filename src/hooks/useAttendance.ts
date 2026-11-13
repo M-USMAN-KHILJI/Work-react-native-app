@@ -1,39 +1,17 @@
-import { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import {
-  getActiveSession,
-  getAttendanceHistory,
-  StoredAttendanceRecord,
-} from '../utils/attendanceStore';
+import { useAppSelector } from '../redux';
 
 /**
- * useAttendance — loads today's session state, full history, today's record,
- * and computes current-month attendance stats.
- * Shared by Dashboard and Attendance screens.
+ * useAttendance — reads state directly from Redux store,
+ * providing reactive updates across Dashboard, Attendance, and all components.
  */
 export function useAttendance() {
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
-  const [todayRecord, setTodayRecord] = useState<StoredAttendanceRecord | null>(null);
-  const [allHistory, setAllHistory] = useState<StoredAttendanceRecord[]>([]);
+  const allHistory = useAppSelector((state) => state.attendance.history);
+  const activeSession = useAppSelector((state) => state.attendance.activeSession);
 
-  const loadState = useCallback(async () => {
-    const session = await getActiveSession();
-    setIsCheckedIn(!!session);
+  const isCheckedIn = !!activeSession;
 
-    const history = await getAttendanceHistory();
-    setAllHistory(history);
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    const found = history.find((h) => h.date === todayStr);
-    setTodayRecord(found || null);
-  }, []);
-
-  // Reload every time the screen gains focus
-  useFocusEffect(
-    useCallback(() => {
-      loadState();
-    }, [loadState])
-  );
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayRecord = allHistory.find((h) => h.date === todayStr) || null;
 
   // Current-month stats
   const now = new Date();
@@ -56,13 +34,16 @@ export function useAttendance() {
     workingDays: thisMonthRecords.length,
   };
 
+  const reload = () => {
+    // Redux automatically re-renders when store state updates!
+  };
+
   return {
     isCheckedIn,
     todayRecord,
     allHistory,
     thisMonthRecords,
     monthStats,
-    reload: loadState,
+    reload,
   };
 }
-

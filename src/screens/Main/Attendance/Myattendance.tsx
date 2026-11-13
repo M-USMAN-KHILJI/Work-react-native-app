@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -9,6 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Menu,
+  ArrowLeft,
   Bell,
   Calendar,
   ChevronDown,
@@ -16,14 +17,9 @@ import {
   FileText,
   Clock,
   TrendingUp,
-  CheckCircle2,
   AlertTriangle,
   Briefcase,
-  XCircle,
-  HelpCircle,
   Info,
-  UserCheck,
-  Send,
   LogOut,
   User,
   Plane,
@@ -31,11 +27,10 @@ import {
   CalendarDays,
   ChevronsUpDown,
   Inbox,
-  History,
 } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
 
 import {
   CustomText as Text,
@@ -45,14 +40,12 @@ import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
 import { colors, hp, wp } from '../../../constants/display';
 import { ATTENDANCE_RULES_LIST } from '../../../utils/attendanceRules';
-import {
-  StoredAttendanceRecord,
-  getAttendanceHistory,
-} from '../../../utils/attendanceStore';
 import { computeRecordRules } from '../../../utils/recordCalculator';
 import { styles } from './style';
+import { useAppDispatch, useAppSelector, logout } from '../../../redux';
 
 type AttendanceNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Attendance'>;
+type AttendanceRouteProp = RouteProp<RootStackParamList, 'Attendance'>;
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -63,6 +56,14 @@ const YEARS = ['2026', '2025', '2024'];
 
 export const MyAttendanceScreen: React.FC = () => {
   const navigation = useNavigation<AttendanceNavigationProp>();
+  const route = useRoute<AttendanceRouteProp>();
+  const scrollViewRef = useRef<React.ElementRef<typeof ScrollView>>(null);
+  const historyYRef = useRef(0);
+
+  const dispatch = useAppDispatch();
+  const historyRecords = useAppSelector((state) => state.attendance.history);
+  const user = useAppSelector((state) => state.auth.user);
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -76,19 +77,14 @@ export const MyAttendanceScreen: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonthName);
   const [selectedYear, setSelectedYear] = useState<string>(currentYearStr);
 
-  // Dynamic history from attendance store
-  const [historyRecords, setHistoryRecords] = useState<StoredAttendanceRecord[]>([]);
-
-  const loadHistory = async () => {
-    const list = await getAttendanceHistory();
-    setHistoryRecords(list);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadHistory();
-    }, [])
-  );
+  // Auto-scroll to Attendance History when navigated with scrollToHistory param
+  React.useEffect(() => {
+    if (route.params?.scrollToHistory && historyYRef.current > 0) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ y: historyYRef.current, animated: true });
+      }, 400);
+    }
+  }, [route.params?.scrollToHistory]);
 
   // Filter records based on selected month and year, computing dynamic rules for each record
   const filteredRecords = historyRecords
@@ -133,18 +129,16 @@ export const MyAttendanceScreen: React.FC = () => {
   // Accordion state for rules
   const [isRulesExpanded, setIsRulesExpanded] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsDropdownOpen(false);
-    try {
-      await AsyncStorage.removeItem('@workpulse_remember_me');
-    } catch (e) {
-      // ignore
-    }
+    dispatch(logout());
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
     });
   };
+
+  const isFromDashboard = route.params?.fromDashboard === true;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -152,13 +146,23 @@ export const MyAttendanceScreen: React.FC = () => {
 
       {/* Top Application Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.menuButton}
-          onPress={() => setIsDrawerOpen(true)}
-        >
-          <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
-        </TouchableOpacity>
+        {isFromDashboard ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.menuButton}
+            onPress={() => navigation.goBack()}
+          >
+            <ArrowLeft size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.menuButton}
+            onPress={() => setIsDrawerOpen(true)}
+          >
+            <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
+          </TouchableOpacity>
+        )}
 
         <View style={styles.topRightActions}>
           <TouchableOpacity activeOpacity={0.7} style={styles.bellButton}>
@@ -170,7 +174,7 @@ export const MyAttendanceScreen: React.FC = () => {
             style={styles.avatarCircle}
             onPress={() => setIsDropdownOpen((prev) => !prev)}
           >
-            <Text style={styles.avatarText}>UK</Text>
+            <Text style={styles.avatarText}>{user?.initials || 'UK'}</Text>
           </TouchableOpacity>
 
           {/* Avatar Dropdown Menu */}
@@ -184,7 +188,10 @@ export const MyAttendanceScreen: React.FC = () => {
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.dropdownItem}
-                  onPress={() => setIsDropdownOpen(false)}
+                  onPress={() => {
+                    setIsDropdownOpen(false);
+                    navigation.navigate('Profile');
+                  }}
                 >
                   <User size={wp(4.5)} color="#475569" strokeWidth={2} />
                   <Text style={styles.dropdownItemText}>My Profile</Text>
@@ -207,6 +214,7 @@ export const MyAttendanceScreen: React.FC = () => {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -239,7 +247,7 @@ export const MyAttendanceScreen: React.FC = () => {
 
               <View style={styles.heroPill}>
                 <Briefcase size={wp(3.4)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>8 working days</Text>
+                <Text style={styles.heroPillText}>{workingDaysCount} working days</Text>
               </View>
             </View>
 
@@ -609,7 +617,12 @@ export const MyAttendanceScreen: React.FC = () => {
           </View>
 
           {/* 5. Attendance History Table / Empty State */}
-          <View style={styles.historyCard}>
+          <View
+            style={styles.historyCard}
+            onLayout={(e) => {
+              historyYRef.current = e.nativeEvent.layout.y;
+            }}
+          >
             <View style={styles.historyHeader}>
               <View style={styles.historyIconBox}>
                 <Clock size={wp(5)} color="#0284C7" strokeWidth={2.2} />
@@ -798,48 +811,42 @@ export const MyAttendanceScreen: React.FC = () => {
                 <View style={styles.rulesIconBox}>
                   <Info size={wp(5.2)} color="#0284C7" strokeWidth={2.2} />
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.rulesTitle}>Attendance rules</Text>
-                  <Text style={styles.rulesSub}>
-                    How Present, Late, Short Leave, Half Leave, and Leave are calculated
-                  </Text>
+                <View>
+                  <Text style={styles.rulesTitle}>Attendance Rules</Text>
+                  <Text style={styles.rulesSub}>Policies, working hours & tolerances</Text>
                 </View>
               </View>
               {isRulesExpanded ? (
-                <ChevronUp size={wp(4.8)} color="#64748B" strokeWidth={2} />
+                <ChevronUp size={wp(5)} color="#64748B" />
               ) : (
-                <ChevronDown size={wp(4.8)} color="#64748B" strokeWidth={2} />
+                <ChevronDown size={wp(5)} color="#64748B" />
               )}
             </TouchableOpacity>
 
             {isRulesExpanded && (
               <View style={styles.rulesContent}>
-                {ATTENDANCE_RULES_LIST.map((rule, index) => {
-                  const isLast = index === ATTENDANCE_RULES_LIST.length - 1;
-                  return (
-                    <View key={rule.step} style={styles.timelineItemRow}>
-                      {/* Left vertical timeline line + badge */}
-                      <View style={styles.timelineCol}>
-                        <View style={styles.timelineBadge}>
-                          <Text style={styles.timelineBadgeText}>{rule.step}</Text>
-                        </View>
-                        {!isLast && <View style={styles.timelineLine} />}
+                {ATTENDANCE_RULES_LIST.map((rule, idx) => (
+                  <View key={rule.step} style={styles.timelineItemRow}>
+                    <View style={styles.timelineCol}>
+                      <View style={styles.timelineBadge}>
+                        <Text style={styles.timelineBadgeText}>{rule.step}</Text>
                       </View>
-
-                      {/* Right rule text */}
-                      <View style={styles.timelineContentCol}>
-                        <Text style={styles.timelineRuleText}>{rule.text}</Text>
-                      </View>
+                      {idx < ATTENDANCE_RULES_LIST.length - 1 && (
+                        <View style={styles.timelineLine} />
+                      )}
                     </View>
-                  );
-                })}
+                    <View style={styles.timelineContentCol}>
+                      <Text style={styles.timelineRuleText}>{rule.text}</Text>
+                    </View>
+                  </View>
+                ))}
               </View>
             )}
           </View>
         </View>
       </ScrollView>
 
-      {/* Custom Animated Drawer */}
+      {/* Drawer */}
       <CustomDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
