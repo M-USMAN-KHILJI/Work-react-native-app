@@ -81,6 +81,8 @@ export const MyProfileScreen: React.FC = () => {
   const newPasswordRef = useRef<React.ElementRef<typeof View>>(null);
   const confirmPasswordRef = useRef<React.ElementRef<typeof View>>(null);
 
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
@@ -88,10 +90,12 @@ export const MyProfileScreen: React.FC = () => {
     const showSub = Keyboard.addListener(showEvent, (e) => {
       const height = e.endCoordinates ? e.endCoordinates.height : 0;
       setKeyboardSpace(height);
+      setIsKeyboardVisible(true);
     });
 
     const hideSub = Keyboard.addListener(hideEvent, () => {
       setKeyboardSpace(0);
+      setIsKeyboardVisible(false);
     });
 
     return () => {
@@ -104,8 +108,8 @@ export const MyProfileScreen: React.FC = () => {
 
   const handleScroll = (event: any) => {
     const currentY = event.nativeEvent.contentOffset.y;
-    // Dismiss keyboard ONLY when scrolling up (moving back to top)
-    if (currentY < lastOffsetY.current && lastOffsetY.current - currentY > 20) {
+    // Dismiss keyboard ONLY when scrolling up while keyboard is active
+    if (isKeyboardVisible && currentY < lastOffsetY.current && lastOffsetY.current - currentY > 15) {
       Keyboard.dismiss();
     }
     lastOffsetY.current = currentY;
