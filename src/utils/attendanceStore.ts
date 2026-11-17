@@ -4,6 +4,7 @@ import {
   evaluateCheckInEligibility,
   evaluateCheckOutEligibility,
 } from './attendanceRules';
+import { getLocalDateString } from './dateUtils';
 import { store } from '../redux/store';
 import {
   checkInAction,
@@ -22,6 +23,8 @@ export interface StoredAttendanceRecord {
   extraHoursFormatted: string;
   lateByFormatted: string;
   statuses: Array<'Present' | 'Late' | 'Half Leave' | 'Short Leave' | 'Leave'>;
+  isWFH?: boolean;
+  wfhReason?: string;
 }
 
 export const INITIAL_MOCK_HISTORY: StoredAttendanceRecord[] = [
@@ -126,7 +129,8 @@ export async function saveActiveSession(session: { checkInISO: string } | null):
 export async function performCheckIn(
   date: Date = new Date(),
   userLocation?: { latitude: number; longitude: number },
-  isWFH: boolean = false
+  isWFH: boolean = false,
+  wfhReason?: string
 ): Promise<{ success: boolean; message: string; record?: StoredAttendanceRecord }> {
   const eligibility = evaluateCheckInEligibility(date, userLocation, isWFH);
 
@@ -138,7 +142,7 @@ export async function performCheckIn(
   }
 
   const checkInISO = date.toISOString();
-  const dateStr = date.toISOString().split('T')[0];
+  const dateStr = getLocalDateString(date);
   const dayResult = calculateDayAttendance(date, null);
 
   const newRecord: StoredAttendanceRecord = {
@@ -151,12 +155,14 @@ export async function performCheckIn(
     extraHoursFormatted: '—',
     lateByFormatted: dayResult.lateByFormatted,
     statuses: dayResult.statuses,
+    isWFH,
+    wfhReason,
   };
 
   // Dispatch Redux action
   store.dispatch(checkInAction({ record: newRecord, checkInISO }));
 
-  let successMsg = 'Checked in successfully!';
+  let successMsg = isWFH ? 'WFH Check-in recorded!' : 'Checked in successfully!';
   if (eligibility.isLate) {
     successMsg = `Checked in! Marked as Late (${dayResult.lateByFormatted} after 10:15 AM).`;
   }
@@ -198,7 +204,7 @@ export async function performCheckOut(
   }
 
   const checkOutISO = date.toISOString();
-  const dateStr = checkInDate.toISOString().split('T')[0];
+  const dateStr = getLocalDateString(checkInDate);
   const dayResult = calculateDayAttendance(checkInDate, date);
 
   const updatedRecord: StoredAttendanceRecord = {

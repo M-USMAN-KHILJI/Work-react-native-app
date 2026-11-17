@@ -35,6 +35,7 @@ import type { RouteProp } from '@react-navigation/native';
 import {
   CustomText as Text,
   CustomTouchableOpacity as TouchableOpacity,
+  FadeInUp,
 } from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
@@ -220,49 +221,52 @@ export const MyAttendanceScreen: React.FC = () => {
       >
         <View style={styles.mainContent}>
           {/* 1. Hero Card */}
-          <LinearGradient
-            colors={['#085B7A', '#064963', '#03374B']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 0.9, y: 1 }}
-            style={styles.heroCard}
-          >
-            <Text style={styles.heroPreTitle}>Attendance Module</Text>
-            <Text style={styles.heroTitle}>My attendance overview</Text>
-            <Text style={styles.heroDescription}>
-              Review monthly stats, track every status from Present to Paid Leave, and browse your full attendance history below.
-            </Text>
+          <FadeInUp delay={100} duration={650} distance={hp(4)}>
+            <LinearGradient
+              colors={['#085B7A', '#064963', '#03374B']}
+              start={{ x: 0.1, y: 0 }}
+              end={{ x: 0.9, y: 1 }}
+              style={styles.heroCard}
+            >
+              <Text style={styles.heroPreTitle}>Attendance Module</Text>
+              <Text style={styles.heroTitle}>My attendance overview</Text>
+              <Text style={styles.heroDescription}>
+                Review monthly stats, track every status from Present to Paid Leave, and browse your full attendance history below.
+              </Text>
 
-            <View style={styles.heroPillsRow}>
-              <View style={styles.heroPill}>
-                <Calendar size={wp(3.4)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>
-                  {reportType === 'Monthly' ? 'Monthly view' : 'Yearly view'}
+              <View style={styles.heroPillsRow}>
+                <View style={styles.heroPill}>
+                  <Calendar size={wp(3.4)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>
+                    {reportType === 'Monthly' ? 'Monthly view' : 'Yearly view'}
+                  </Text>
+                </View>
+
+                <View style={styles.heroPill}>
+                  <TrendingUp size={wp(3.4)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>100% rate</Text>
+                </View>
+
+                <View style={styles.heroPill}>
+                  <Briefcase size={wp(3.4)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>{workingDaysCount} working days</Text>
+                </View>
+              </View>
+
+              <View style={styles.monthSelectorButton}>
+                <Calendar size={wp(4.2)} color={colors.textPrimary} />
+                <Text style={styles.monthSelectorButtonText}>
+                  {reportType === 'Monthly' ? `${selectedMonth} ${selectedYear}` : selectedYear}
                 </Text>
               </View>
 
-              <View style={styles.heroPill}>
-                <TrendingUp size={wp(3.4)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>100% rate</Text>
-              </View>
-
-              <View style={styles.heroPill}>
-                <Briefcase size={wp(3.4)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>{workingDaysCount} working days</Text>
-              </View>
-            </View>
-
-            <View style={styles.monthSelectorButton}>
-              <Calendar size={wp(4.2)} color={colors.textPrimary} />
-              <Text style={styles.monthSelectorButtonText}>
-                {reportType === 'Monthly' ? `${selectedMonth} ${selectedYear}` : selectedYear}
-              </Text>
-            </View>
-
-            <Text style={styles.heroFooterHint}>Selected recording period</Text>
-          </LinearGradient>
+              <Text style={styles.heroFooterHint}>Selected recording period</Text>
+            </LinearGradient>
+          </FadeInUp>
 
           {/* 2. My Attendance Report Filter Card */}
-          <View style={styles.reportCard}>
+          <FadeInUp delay={250} duration={750} distance={hp(7)}>
+            <View style={styles.reportCard}>
             <View style={styles.reportHeaderRow}>
               <View style={styles.reportIconBox}>
                 <FileText size={wp(5)} color="#0284C7" strokeWidth={2.2} />
@@ -488,9 +492,11 @@ export const MyAttendanceScreen: React.FC = () => {
               />
             </View>
           </View>
+          </FadeInUp>
 
           {/* 4. 8-Grid Attendance Metric Cards */}
-          <View style={styles.statsGrid}>
+          <FadeInUp delay={380} duration={800} distance={hp(7)}>
+            <View style={styles.statsGrid}>
             {/* 1. Present */}
             <View style={[styles.statCard, styles.cardPresent]}>
               <View style={styles.statCardRow}>
@@ -615,14 +621,16 @@ export const MyAttendanceScreen: React.FC = () => {
               </Text>
             </View>
           </View>
+          </FadeInUp>
 
           {/* 5. Attendance History Table / Empty State */}
-          <View
-            style={styles.historyCard}
-            onLayout={(e) => {
-              historyYRef.current = e.nativeEvent.layout.y;
-            }}
-          >
+          <FadeInUp delay={500} duration={800} distance={hp(7)}>
+            <View
+              style={styles.historyCard}
+              onLayout={(e) => {
+                historyYRef.current = e.nativeEvent.layout.y;
+              }}
+            >
             <View style={styles.historyHeader}>
               <View style={styles.historyIconBox}>
                 <Clock size={wp(5)} color="#0284C7" strokeWidth={2.2} />
@@ -799,9 +807,11 @@ export const MyAttendanceScreen: React.FC = () => {
               </View>
             )}
           </View>
+          </FadeInUp>
 
           {/* 6. Attendance Rules Accordion */}
-          <View style={styles.rulesCard}>
+          <FadeInUp delay={620} duration={800} distance={hp(7)}>
+            <View style={styles.rulesCard}>
             <TouchableOpacity
               activeOpacity={0.7}
               style={styles.rulesHeaderRow}
@@ -843,6 +853,7 @@ export const MyAttendanceScreen: React.FC = () => {
               </View>
             )}
           </View>
+          </FadeInUp>
         </View>
       </ScrollView>
 

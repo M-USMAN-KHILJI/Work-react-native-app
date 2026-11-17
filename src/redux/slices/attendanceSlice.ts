@@ -57,6 +57,10 @@ export const attendanceSlice = createSlice({
     ) => {
       state.activeSession = action.payload;
     },
+    clearTodayAttendance: (state, action: PayloadAction<string>) => {
+      state.activeSession = null;
+      state.history = state.history.filter((h) => h.date !== action.payload);
+    },
   },
 });
 
@@ -65,6 +69,7 @@ export const {
   checkOutAction,
   setAttendanceHistory,
   setActiveSession,
+  clearTodayAttendance,
 } = attendanceSlice.actions;
 
 export default attendanceSlice.reducer;

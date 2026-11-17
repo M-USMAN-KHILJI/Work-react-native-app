@@ -88,11 +88,11 @@ export function computeRecordRules(
 
   const statuses: Array<'Present' | 'Late' | 'Half Leave' | 'Short Leave' | 'Leave'> = [];
 
-  // Duration rules:
-  // < 7h -> Half Leave
-  // 7h to < 9h -> Short Leave (also counts as Late for leaving before 9 hours)
+  // Duration rules (Rule 5):
+  // < 6h -> Half Leave
+  // 6h to < 9h -> Short Leave (also counts as Late for leaving before 9 hours)
   // >= 9h -> Present (and Late if check-in was late)
-  if (diffMinutes < 7 * 60) {
+  if (diffMinutes < 6 * 60) {
     statuses.push('Half Leave');
     if (isLate) statuses.push('Late');
   } else if (diffMinutes < 9 * 60) {

@@ -197,7 +197,9 @@ export function formatDuration(minutes: number): string {
   if (minutes <= 0) return '—';
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return `${h}h ${m}m`;
+  if (h > 0 && m > 0) return `${h}h ${m}m`;
+  if (h > 0) return `${h}h`;
+  return `${m}m`;
 }
 
 /**
@@ -266,12 +268,12 @@ export function calculateDayAttendance(
 
   const statuses: AttendanceStatusType[] = [];
 
-  // Duration & Checkout rules:
+  // Duration & Checkout rules (Rule 5):
   // - If check-in was after 10:15 AM -> Late
-  // - If check-out is before completing 7 hours -> Half Leave
-  // - If check-out is before completing 9 hours (7h to under 9h) -> Short Leave / Late
+  // - If check-out is before completing 6 hours (< 6h) -> Half Leave
+  // - If check-out is between 6h and under 9h (6h to under 9h) -> Short Leave / Late
   // - If 9h+ completed -> Present (and Late if check-in was late)
-  if (workingMinutes < 7 * 60) {
+  if (workingMinutes < 6 * 60) {
     statuses.push('Half Leave');
   } else if (workingMinutes < 9 * 60) {
     statuses.push('Short Leave');

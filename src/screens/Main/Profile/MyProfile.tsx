@@ -35,6 +35,7 @@ import {
   CustomText as Text,
   CustomTouchableOpacity as TouchableOpacity,
   showCustomToast,
+  FadeInUp,
 } from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import { colors, hp, wp } from '../../../constants/display';
@@ -239,160 +240,167 @@ export const MyProfileScreen: React.FC = () => {
             scrollEventThrottle={16}
           >
           {/* 1. Hero Profile Card with Deep Gradient */}
-        <LinearGradient
-          colors={['#085B7A', '#064963', '#03374B']}
-          start={{ x: 0.1, y: 0 }}
-          end={{ x: 0.9, y: 1 }}
-          style={styles.heroProfileCard}
-        >
-          <View style={styles.heroTopRow}>
-            <View style={styles.avatarLarge}>
-              <Text style={styles.avatarLargeText}>UK</Text>
-            </View>
-            <View style={styles.heroNameCol}>
-              <Text style={styles.heroSubtitle}>Account • My Profile</Text>
-              <Text style={styles.heroTitle}>Usman Khurram</Text>
-              <Text style={styles.heroRole}>Intern • Employee</Text>
-            </View>
-          </View>
-
-          <View style={styles.heroPillsList}>
-            <View style={styles.heroPill}>
-              <Building size={wp(3.6)} color="#FFFFFF" />
-              <Text style={styles.heroPillText}>ST-166642</Text>
-            </View>
-
-            <View style={styles.heroPill}>
-              <Mail size={wp(3.6)} color="#FFFFFF" />
-              <Text style={styles.heroPillText}>usman.khurram@interns.senewtch.com</Text>
-            </View>
-
-            <View style={styles.heroPill}>
-              <Shield size={wp(3.6)} color="#FFFFFF" />
-              <Text style={styles.heroPillText}>Active account</Text>
-            </View>
-          </View>
-        </LinearGradient>
-
-        {/* 2. Top Summary Metric Cards */}
-        <View style={styles.summaryCardsCol}>
-          {/* Member Since Card */}
-          <View style={[styles.summaryCard, { backgroundColor: colors.profile.memberSinceBg }]}>
-            <View style={[styles.summaryIconBox, { backgroundColor: '#DCFCE7' }]}>
-              <Calendar size={wp(5.2)} color="#15803D" strokeWidth={2.2} />
-            </View>
-            <View style={styles.summaryInfoCol}>
-              <Text style={styles.summaryLabel}>MEMBER SINCE</Text>
-              <Text style={styles.summaryValue}>June 15, 2026</Text>
-            </View>
-          </View>
-
-          {/* Account Status Card */}
-          <View style={[styles.summaryCard, { backgroundColor: colors.profile.accountStatusBg }]}>
-            <View style={[styles.summaryIconBox, { backgroundColor: '#E0F2FE' }]}>
-              <Shield size={wp(5.2)} color="#0284C7" strokeWidth={2.2} />
-            </View>
-            <View style={styles.summaryInfoCol}>
-              <Text style={styles.summaryLabel}>ACCOUNT STATUS</Text>
-              <Text style={styles.summaryValue}>Active</Text>
-            </View>
-          </View>
-
-          {/* Employee ID Card */}
-          <View style={[styles.summaryCard, { backgroundColor: colors.profile.employeeIdBg }]}>
-            <View style={[styles.summaryIconBox, { backgroundColor: '#F3E8FF' }]}>
-              <Hash size={wp(5.2)} color="#9333EA" strokeWidth={2.2} />
-            </View>
-            <View style={styles.summaryInfoCol}>
-              <Text style={styles.summaryLabel}>EMPLOYEE ID</Text>
-              <Text style={styles.summaryValue}>ST-166642</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* 3. Personal Information Card */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderIconBox}>
-              <User size={wp(5)} color="#0284C7" strokeWidth={2.2} />
-            </View>
-            <View style={styles.sectionHeaderCol}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
-              <Text style={styles.sectionSubtitle}>Your basic profile and employment details</Text>
-            </View>
-          </View>
-
-          <View style={styles.personalInfoList}>
-            {/* Full Name */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.fullNameBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <User size={wp(4.8)} color="#0284C7" />
+          <FadeInUp delay={100} duration={650} distance={hp(4)}>
+            <LinearGradient
+              colors={['#085B7A', '#064963', '#03374B']}
+              start={{ x: 0.1, y: 0 }}
+              end={{ x: 0.9, y: 1 }}
+              style={styles.heroProfileCard}
+            >
+              <View style={styles.heroTopRow}>
+                <View style={styles.avatarLarge}>
+                  <Text style={styles.avatarLargeText}>UK</Text>
+                </View>
+                <View style={styles.heroNameCol}>
+                  <Text style={styles.heroSubtitle}>Account • My Profile</Text>
+                  <Text style={styles.heroTitle}>Usman Khurram</Text>
+                  <Text style={styles.heroRole}>Intern • Employee</Text>
+                </View>
               </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>FULL NAME</Text>
-                <Text style={styles.infoTileValue}>Usman Khurram</Text>
+
+              <View style={styles.heroPillsList}>
+                <View style={styles.heroPill}>
+                  <Building size={wp(3.6)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>ST-166642</Text>
+                </View>
+
+                <View style={styles.heroPill}>
+                  <Mail size={wp(3.6)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>usman.khurram@interns.senewtch.com</Text>
+                </View>
+
+                <View style={styles.heroPill}>
+                  <Shield size={wp(3.6)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>Active account</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </FadeInUp>
+
+          {/* 2. Top Summary Metric Cards */}
+          <FadeInUp delay={250} duration={750} distance={hp(7)}>
+            <View style={styles.summaryCardsCol}>
+              {/* Member Since Card */}
+              <View style={[styles.summaryCard, { backgroundColor: colors.profile.memberSinceBg }]}>
+                <View style={[styles.summaryIconBox, { backgroundColor: '#DCFCE7' }]}>
+                  <Calendar size={wp(5.2)} color="#15803D" strokeWidth={2.2} />
+                </View>
+                <View style={styles.summaryInfoCol}>
+                  <Text style={styles.summaryLabel}>MEMBER SINCE</Text>
+                  <Text style={styles.summaryValue}>June 15, 2026</Text>
+                </View>
+              </View>
+
+              {/* Account Status Card */}
+              <View style={[styles.summaryCard, { backgroundColor: colors.profile.accountStatusBg }]}>
+                <View style={[styles.summaryIconBox, { backgroundColor: '#E0F2FE' }]}>
+                  <Shield size={wp(5.2)} color="#0284C7" strokeWidth={2.2} />
+                </View>
+                <View style={styles.summaryInfoCol}>
+                  <Text style={styles.summaryLabel}>ACCOUNT STATUS</Text>
+                  <Text style={styles.summaryValue}>Active</Text>
+                </View>
+              </View>
+
+              {/* Employee ID Card */}
+              <View style={[styles.summaryCard, { backgroundColor: colors.profile.employeeIdBg }]}>
+                <View style={[styles.summaryIconBox, { backgroundColor: '#F3E8FF' }]}>
+                  <Hash size={wp(5.2)} color="#9333EA" strokeWidth={2.2} />
+                </View>
+                <View style={styles.summaryInfoCol}>
+                  <Text style={styles.summaryLabel}>EMPLOYEE ID</Text>
+                  <Text style={styles.summaryValue}>ST-166642</Text>
+                </View>
               </View>
             </View>
+          </FadeInUp>
 
-            {/* Email Address */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.emailAddressBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <Mail size={wp(4.8)} color="#0284C7" />
+          {/* 3. Personal Information Card */}
+          <FadeInUp delay={380} duration={800} distance={hp(7)}>
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeaderRow}>
+                <View style={styles.sectionHeaderIconBox}>
+                  <User size={wp(5)} color="#0284C7" strokeWidth={2.2} />
+                </View>
+                <View style={styles.sectionHeaderCol}>
+                  <Text style={styles.sectionTitle}>Personal Information</Text>
+                  <Text style={styles.sectionSubtitle}>Your basic profile and employment details</Text>
+                </View>
               </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>EMAIL ADDRESS</Text>
-                <Text style={styles.infoTileValue}>usman.khurram@interns.senewtch.com</Text>
+
+              <View style={styles.personalInfoList}>
+                {/* Full Name */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.fullNameBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <User size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>FULL NAME</Text>
+                    <Text style={styles.infoTileValue}>Usman Khurram</Text>
+                  </View>
+                </View>
+
+                {/* Email Address */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.emailAddressBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <Mail size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>EMAIL ADDRESS</Text>
+                    <Text style={styles.infoTileValue}>usman.khurram@interns.senewtch.com</Text>
+                  </View>
+                </View>
+
+                {/* Employee ID */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.employeeIdTileBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <Hash size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>EMPLOYEE ID</Text>
+                    <Text style={styles.infoTileValue}>ST-166642</Text>
+                  </View>
+                </View>
+
+                {/* Designation */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.designationBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <Briefcase size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>DESIGNATION</Text>
+                    <Text style={styles.infoTileValue}>Intern</Text>
+                  </View>
+                </View>
+
+                {/* Joining Date */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.joiningDateBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <Calendar size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>JOINING DATE</Text>
+                    <Text style={styles.infoTileValue}>June 15, 2026</Text>
+                  </View>
+                </View>
+
+                {/* Monthly Salary */}
+                <View style={[styles.infoTile, { backgroundColor: colors.profile.monthlySalaryBg }]}>
+                  <View style={styles.infoTileIconBox}>
+                    <CreditCard size={wp(4.8)} color="#0284C7" />
+                  </View>
+                  <View style={styles.infoTileContent}>
+                    <Text style={styles.infoTileLabel}>MONTHLY SALARY</Text>
+                    <Text style={styles.infoTileValue}>PKR 1</Text>
+                  </View>
+                </View>
               </View>
             </View>
+          </FadeInUp>
 
-            {/* Employee ID */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.employeeIdTileBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <Hash size={wp(4.8)} color="#0284C7" />
-              </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>EMPLOYEE ID</Text>
-                <Text style={styles.infoTileValue}>ST-166642</Text>
-              </View>
-            </View>
-
-            {/* Designation */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.designationBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <Briefcase size={wp(4.8)} color="#0284C7" />
-              </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>DESIGNATION</Text>
-                <Text style={styles.infoTileValue}>Intern</Text>
-              </View>
-            </View>
-
-            {/* Joining Date */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.joiningDateBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <Calendar size={wp(4.8)} color="#0284C7" />
-              </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>JOINING DATE</Text>
-                <Text style={styles.infoTileValue}>June 15, 2026</Text>
-              </View>
-            </View>
-
-            {/* Monthly Salary */}
-            <View style={[styles.infoTile, { backgroundColor: colors.profile.monthlySalaryBg }]}>
-              <View style={styles.infoTileIconBox}>
-                <CreditCard size={wp(4.8)} color="#0284C7" />
-              </View>
-              <View style={styles.infoTileContent}>
-                <Text style={styles.infoTileLabel}>MONTHLY SALARY</Text>
-                <Text style={styles.infoTileValue}>PKR 1</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* 4. Change Password Card */}
-        <View style={styles.sectionCard}>
+          {/* 4. Change Password Card */}
+          <FadeInUp delay={500} duration={800} distance={hp(7)}>
+            <View style={styles.sectionCard}>
           <View style={styles.sectionHeaderRow}>
             <View style={[styles.sectionHeaderIconBox, { backgroundColor: '#F0FDFA' }]}>
               <KeyRound size={wp(5)} color="#0D9488" strokeWidth={2.2} />
@@ -577,6 +585,7 @@ export const MyProfileScreen: React.FC = () => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
+        </FadeInUp>
       </ScrollView>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>

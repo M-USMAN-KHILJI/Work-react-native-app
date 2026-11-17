@@ -32,6 +32,7 @@ import {
   CheckInModal,
   CheckOutModal,
   showCustomToast,
+  FadeInUp,
 } from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import {
@@ -42,7 +43,8 @@ import { useDrawer, useCurrentTime, useAttendance } from '../../../hooks';
 
 import { colors, hp, wp } from '../../../constants/display';
 import { styles } from './style';
-import { useAppDispatch, useAppSelector, markLoginToastShown } from '../../../redux';
+import { useAppDispatch, useAppSelector, markLoginToastShown, clearTodayAttendance } from '../../../redux';
+import { getLocalDateString } from '../../../utils/dateUtils';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -70,6 +72,7 @@ export const DashboardScreen: React.FC = () => {
 
   const [isCheckInModalVisible, setIsCheckInModalVisible] = useState(false);
   const [isCheckOutModalVisible, setIsCheckOutModalVisible] = useState(false);
+  const [isOutsideRadiusMode, setIsOutsideRadiusMode] = useState(false);
   const [liveWorkingMinutes, setLiveWorkingMinutes] = useState(0);
 
   // Live timer for working hours when checked in
@@ -122,7 +125,16 @@ export const DashboardScreen: React.FC = () => {
     year: 'numeric',
   });
 
-  const handleCheckInPress = () => {
+  const isTodayLate = isCheckedIn && !!todayRecord?.statuses?.includes('Late');
+  const lateByText = todayRecord?.lateByFormatted && todayRecord.lateByFormatted !== '—'
+    ? todayRecord.lateByFormatted
+    : null;
+
+  // Rule 9: Combined Late / Short Leaves count for current month
+  const combinedLateShortCount = (monthStats.late || 0) + (monthStats.shortLeave || 0);
+  const lateProgressPercent = Math.min(100, Math.round((Math.min(combinedLateShortCount, 3) / 3) * 100));
+
+  const handleCheckInPress = (outsideRadius: boolean = false) => {
     if (isCheckedIn) return;
     if (hasCheckedOutToday) {
       Toast.show({
@@ -140,17 +152,18 @@ export const DashboardScreen: React.FC = () => {
       });
       return;
     }
+    setIsOutsideRadiusMode(outsideRadius);
     setIsCheckInModalVisible(true);
   };
 
-  const handleConfirmCheckIn = async () => {
+  const handleConfirmCheckIn = async (data: { isWFH: boolean; wfhReason?: string }) => {
     setIsCheckInModalVisible(false);
-    const res = await performCheckIn(new Date());
+    const res = await performCheckIn(new Date(), undefined, data.isWFH, data.wfhReason);
     if (res.success) {
       showCustomToast({
         type: 'success',
-        title: 'Check In Successful',
-        message: 'You have checked in successfully.',
+        title: data.isWFH ? 'WFH Check In Successful' : 'Check In Successful',
+        message: data.isWFH ? 'Work from home recorded successfully.' : 'You have checked in successfully.',
       });
       reloadAttendance();
     } else {
@@ -269,47 +282,62 @@ export const DashboardScreen: React.FC = () => {
       >
         <View style={styles.mainContent}>
           {/* 1. Hero Card */}
-          <LinearGradient
-            colors={['#085B7A', '#064963', '#03374B']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 0.9, y: 1 }}
-            style={styles.heroCard}
-          >
-            <Text style={styles.heroDate}>{currentDayMonthYear.replace(',', ' •')}</Text>
-            <Text style={styles.heroGreeting}>Good evening,{'\n'}Usman</Text>
-            <Text style={styles.heroDescription}>
-              Check in, track your day, and review Present, Late, Half Leave, Leave, and
-              Paid Leave — all from one place.
-            </Text>
-
-            <View style={styles.heroPillsRow}>
-              <View style={styles.heroPill}>
-                <TrendingUp size={wp(3.5)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>100% this month</Text>
-              </View>
-
-              <View style={styles.heroPill}>
-                <Briefcase size={wp(3.5)} color="#FFFFFF" />
-                <Text style={styles.heroPillText}>{monthStats.workingDays} working days</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity
-              activeOpacity={0.85}
-              style={styles.attendanceButton}
-              onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
+          <FadeInUp delay={100} duration={650} distance={hp(4)}>
+            <LinearGradient
+              colors={['#085B7A', '#064963', '#03374B']}
+              start={{ x: 0.1, y: 0 }}
+              end={{ x: 0.9, y: 1 }}
+              style={styles.heroCard}
             >
-              <Calendar size={wp(4.2)} color={colors.textPrimary} />
-              <Text style={styles.attendanceButtonText}>Attendance</Text>
-            </TouchableOpacity>
-          </LinearGradient>
+              <Text style={styles.heroDate}>{currentDayMonthYear.replace(',', ' •')}</Text>
+              <Text style={styles.heroGreeting}>Good evening,{'\n'}Usman</Text>
+              <Text style={styles.heroDescription}>
+                Check in, track your day, and review Present, Late, Half Leave, Leave, and
+                Paid Leave — all from one place.
+              </Text>
+
+              <View style={styles.heroPillsRow}>
+                <View style={styles.heroPill}>
+                  <TrendingUp size={wp(3.5)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>100% this month</Text>
+                </View>
+
+                <View style={styles.heroPill}>
+                  <Briefcase size={wp(3.5)} color="#FFFFFF" />
+                  <Text style={styles.heroPillText}>{monthStats.workingDays} working days</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                style={styles.attendanceButton}
+                onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
+              >
+                <Calendar size={wp(4.2)} color={colors.textPrimary} />
+                <Text style={styles.attendanceButtonText}>Attendance</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </FadeInUp>
 
           {/* 2. Today's Attendance Card */}
-          <View style={styles.attendanceCard}>
+          <FadeInUp delay={250} duration={750} distance={hp(6)}>
+            <View style={styles.attendanceCard}>
             <View style={styles.attendanceCardHeader}>
               <View>
-                <Text style={styles.attendanceTitle}>Today's Attendance</Text>
-                <Text style={styles.attendanceSubinfo}>Late after 10:15 AM • Radius 50 m</Text>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onLongPress={() => {
+                    dispatch(clearTodayAttendance(getLocalDateString(new Date())));
+                    showCustomToast({
+                      type: 'success',
+                      title: 'Reset Completed',
+                      message: "Today's check-in/out records have been cleared for testing.",
+                    });
+                  }}
+                >
+                  <Text style={styles.attendanceTitle}>Today's Attendance</Text>
+                  <Text style={styles.attendanceSubinfo}>Late after 10:15 AM • Radius 50 m</Text>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.currentTimeContainer}>
@@ -329,6 +357,21 @@ export const DashboardScreen: React.FC = () => {
                   <Text style={styles.presentBadgeText}>Present</Text>
                 </View>
 
+                {/* Late Badge (if checked in late) */}
+                {isTodayLate && (
+                  <View style={styles.latePillBadge}>
+                    <View style={styles.lateDot} />
+                    <Text style={styles.latePillBadgeText}>Late</Text>
+                  </View>
+                )}
+
+                {/* WFH Badge (if checked in from home) */}
+                {todayRecord?.isWFH && (
+                  <View style={styles.wfhPillBadge}>
+                    <Text style={styles.wfhPillBadgeText}>WFH</Text>
+                  </View>
+                )}
+
                 {/* In time badge */}
                 <View style={styles.inTimeBadge}>
                   <Text style={styles.inTimeBadgeText}>
@@ -341,6 +384,30 @@ export const DashboardScreen: React.FC = () => {
                   <Text style={styles.workingTimeBadgeText}>
                     Working {displayWorkingHours}
                   </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Late Check-In Warning Notice Card (matching design reference) */}
+            {isCheckedIn && isTodayLate && (
+              <View style={styles.lateNoticeCard}>
+                <Text style={styles.lateNoticeTitle}>Late Check-In</Text>
+                <Text style={styles.lateNoticeBody}>
+                  Checked in at {todayRecord?.checkInTimeFormatted || '—'}. You are {lateByText ? `${lateByText} ` : ''}late — recorded as Late.
+                </Text>
+
+                <View style={styles.lateNoticeFooterRow}>
+                  <Text style={styles.lateNoticeCountLabel}>
+                    Late / Short Leaves {combinedLateShortCount} / 3
+                  </Text>
+                  <View style={styles.lateProgressBarTrack}>
+                    <View
+                      style={[
+                        styles.lateProgressBarFill,
+                        { width: `${lateProgressPercent}%` },
+                      ]}
+                    />
+                  </View>
                 </View>
               </View>
             )}
@@ -370,7 +437,11 @@ export const DashboardScreen: React.FC = () => {
                     ? styles.checkInCardLocked
                     : styles.checkInCardActiveState,
                 ]}
-                onPress={handleCheckInPress}
+                onPress={() => handleCheckInPress(false)}
+                onLongPress={() => {
+                  // Long press allows testing Check-In while outside 50m radius (WFH mode)
+                  handleCheckInPress(true);
+                }}
                 disabled={isCheckedIn || hasCheckedOutToday || !isAfter10AM}
               >
                 {(isCheckedIn || hasCheckedOutToday) && (
@@ -432,8 +503,11 @@ export const DashboardScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
+          </FadeInUp>
 
           {/* 3. Metric Info Cards with Exact Linear Gradients */}
+          <FadeInUp delay={350} duration={750} distance={hp(7)}>
+            <View>
           {/* Card 1: Check In */}
           <View style={[styles.metricCardWrapper, { borderColor: '#BAE6FD' }]}>
             <LinearGradient
@@ -535,8 +609,11 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </LinearGradient>
           </View>
+            </View>
+          </FadeInUp>
 
           {/* 4. This Month Attendance Section */}
+          <FadeInUp delay={450} duration={800} distance={hp(7)}>
           <View style={styles.sectionCard}>
             <View style={styles.sectionHeaderRow}>
               <View>
@@ -597,8 +674,10 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </View>
           </View>
+          </FadeInUp>
 
           {/* 5. Paid Leaves Section */}
+          <FadeInUp delay={550} duration={800} distance={hp(7)}>
           <View style={styles.paidLeavesCard}>
             <View style={styles.paidLeavesHeaderBanner}>
               <View style={styles.leavesHeaderTitleRow}>
@@ -645,8 +724,10 @@ export const DashboardScreen: React.FC = () => {
               </View>
             </View>
           </View>
+          </FadeInUp>
 
           {/* 6. Quick Links */}
+          <FadeInUp delay={650} duration={800} distance={hp(7)}>
           <View style={styles.quickLinksCard}>
             <View style={styles.quickLinksHeaderRow}>
               <View>
@@ -668,6 +749,7 @@ export const DashboardScreen: React.FC = () => {
               <ChevronRight size={wp(4.5)} color={colors.textMuted} />
             </TouchableOpacity>
           </View>
+          </FadeInUp>
         </View>
       </ScrollView>
 
@@ -683,6 +765,7 @@ export const DashboardScreen: React.FC = () => {
       <CheckInModal
         visible={isCheckInModalVisible}
         currentTime={currentTime}
+        isOutsideRadius={isOutsideRadiusMode}
         onClose={() => setIsCheckInModalVisible(false)}
         onConfirm={handleConfirmCheckIn}
       />

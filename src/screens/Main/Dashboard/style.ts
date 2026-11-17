@@ -249,6 +249,40 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#15803D',
   },
+  latePillBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.6),
+    borderRadius: radius.full,
+    gap: wp(1.5),
+  },
+  lateDot: {
+    width: wp(2.2),
+    height: wp(2.2),
+    borderRadius: wp(1.1),
+    backgroundColor: '#B45309',
+  },
+  latePillBadgeText: {
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    color: '#B45309',
+  },
+  wfhPillBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.6),
+    borderRadius: radius.full,
+    gap: wp(1.5),
+  },
+  wfhPillBadgeText: {
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    color: '#D97706',
+  },
   inTimeBadge: {
     backgroundColor: '#F1F5F9',
     paddingHorizontal: wp(3),
@@ -272,6 +306,53 @@ export const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     fontWeight: '700',
     color: '#065F46',
+  },
+
+  // Late Check-In Warning Card (matching uploaded design spec)
+  lateNoticeCard: {
+    backgroundColor: '#FFFDF0',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    borderRadius: radius.lg,
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1.8),
+    marginBottom: hp(1.5),
+  },
+  lateNoticeTitle: {
+    fontSize: fontSize.md,
+    fontWeight: '800',
+    color: '#92400E',
+    marginBottom: hp(0.6),
+  },
+  lateNoticeBody: {
+    fontSize: fontSize.xs,
+    color: '#9A3412',
+    lineHeight: hp(2.1),
+    marginBottom: hp(1.4),
+  },
+  lateNoticeFooterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: wp(3),
+  },
+  lateNoticeCountLabel: {
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    color: '#78350F',
+    flexShrink: 0,
+  },
+  lateProgressBarTrack: {
+    flex: 1,
+    height: hp(0.9),
+    backgroundColor: '#FEF08A',
+    borderRadius: radius.full,
+    overflow: 'hidden',
+  },
+  lateProgressBarFill: {
+    height: '100%',
+    backgroundColor: '#F59E0B',
+    borderRadius: radius.full,
   },
 
   statusBanner: {
