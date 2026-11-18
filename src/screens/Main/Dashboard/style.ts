@@ -186,7 +186,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2),
   },
   attendanceTitle: {
-    fontSize: fontSize.xxl,
+    fontSize: fontSize.md,
     fontWeight: '800',
     color: colors.textPrimary,
     letterSpacing: -0.3,
@@ -745,7 +745,7 @@ export const styles = StyleSheet.create({
     gap: wp(2),
   },
   leavesHeaderTitle: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.xs,
     fontWeight: '700',
     color: colors.status.paidLeaveAccent,
     letterSpacing: -0.2,

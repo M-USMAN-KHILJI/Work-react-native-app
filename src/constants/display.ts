@@ -121,17 +121,17 @@ export const colors = {
     iconBoxBg: '#A7F3D0',
   },
 
-  // Profile Tiles & Containers (Enriched tint for clear visual distinction)
+  // Profile Tiles & Containers (Soft, subtle tints)
   profile: {
-    memberSinceBg: '#E0F7EF',
-    accountStatusBg: '#D9ECF7',
-    employeeIdBg: '#EFEAFD',
-    fullNameBg: '#EBF9F4',
-    emailAddressBg: '#E5F4FC',
-    employeeIdTileBg: '#F1F3F6',
-    designationBg: '#E0F2F7',
-    joiningDateBg: '#FFFBE8',
-    monthlySalaryBg: '#F3EBFD',
+    memberSinceBg: '#F0FDF4',     // Ultra light emerald / green tint
+    accountStatusBg: '#F0F9FF',   // Ultra light sky / blue tint
+    employeeIdBg: '#FAF5FF',      // Ultra light purple / violet tint
+    fullNameBg: '#F0FDF4',        // Ultra light mint / emerald
+    emailAddressBg: '#F0F9FF',    // Ultra light sky tint
+    employeeIdTileBg: '#F8FAFC',  // Ultra light slate tint
+    designationBg: '#F0FDFA',     // Ultra light cyan / teal tint
+    joiningDateBg: '#FEFCE8',     // Ultra light amber / yellow tint
+    monthlySalaryBg: '#FAF5FF',   // Ultra light purple tint
   },
 } as const;
 

@@ -33,6 +33,7 @@ import {
   CheckOutModal,
   showCustomToast,
   FadeInUp,
+  AppHeader,
 } from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import {
@@ -218,63 +219,10 @@ export const DashboardScreen: React.FC = () => {
       <StatusBar barStyle="dark-content" />
 
       {/* Top Application Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.menuButton}
-          onPress={openDrawer}
-        >
-          <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
-        </TouchableOpacity>
-
-        <View style={styles.topRightActions}>
-          <TouchableOpacity activeOpacity={0.7} style={styles.bellButton}>
-            <Bell size={wp(5.2)} color={colors.textSecondary} strokeWidth={2} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.avatarCircle}
-            onPress={toggleDropdown}
-          >
-            <Text style={styles.avatarText}>UK</Text>
-          </TouchableOpacity>
-
-          {/* Avatar Dropdown */}
-          {isDropdownOpen && (
-            <>
-              <Pressable
-                style={styles.dropdownBackdrop}
-                onPress={closeDropdown}
-              />
-              <View style={styles.avatarDropdownMenu}>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    closeDropdown();
-                    navigation.navigate('Profile');
-                  }}
-                >
-                  <User size={wp(4.5)} color="#475569" strokeWidth={2} />
-                  <Text style={styles.dropdownItemText}>My Profile</Text>
-                </TouchableOpacity>
-
-                <View style={styles.dropdownItemDivider} />
-
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.dropdownItem}
-                  onPress={handleLogout}
-                >
-                  <LogOut size={wp(4.5)} color="#475569" strokeWidth={2} />
-                  <Text style={styles.dropdownItemText}>Logout</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        </View>
-      </View>
+      <AppHeader
+        onOpenDrawer={openDrawer}
+        onLogout={handleLogout}
+      />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSize, radius, shadows, hp, wp } from '../../../constants/display';
+import { colors, fontSize, fontFamily, radius, shadows, hp, wp } from '../../../constants/display';
 
 export const styles = StyleSheet.create({
   container: {
@@ -121,7 +121,7 @@ export const styles = StyleSheet.create({
   },
   heroTitle: {
     color: colors.textWhite,
-    fontSize: fontSize.hero,
+    fontSize: fontSize.xxl,
     fontWeight: '800',
     lineHeight: hp(3.2),
     letterSpacing: -0.4,
@@ -201,7 +201,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reportTitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md,
     fontWeight: '800',
     color: colors.textPrimary,
     letterSpacing: -0.2,
@@ -283,18 +283,19 @@ export const styles = StyleSheet.create({
     marginBottom: hp(1.5),
   },
   rateBadge: {
-    backgroundColor: colors.performanceTeal,
-    width: wp(15),
-    height: wp(14),
-    borderRadius: radius.md,
+    backgroundColor: '#00BC7C',
+    width: wp(14.5),
+    height: wp(14.5),
+    borderRadius: radius.lg,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: wp(3.5),
   },
   rateBadgeText: {
     color: colors.textWhite,
-    fontSize: fontSize.xxl,
-    fontWeight: '800',
+    fontSize: fontSize.lg,
+    fontFamily: fontFamily.bold,
+    letterSpacing: -0.3,
   },
   rateLabelRow: {
     flexDirection: 'row',
@@ -492,7 +493,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   historyTitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md,
     fontWeight: '800',
     color: colors.textPrimary,
   },
@@ -676,6 +677,53 @@ export const styles = StyleSheet.create({
   },
   statusTextLeave: {
     color: colors.status.leaveBadgeText,
+  },
+
+  // Pagination Footer matching image
+  paginationContainer: {
+    paddingHorizontal: wp(4),
+    paddingTop: hp(1.8),
+    paddingBottom: hp(1.2),
+    borderTopWidth: 1,
+    borderTopColor: colors.borderDivider,
+  },
+  paginationInfoText: {
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.medium,
+    color: colors.textSecondary,
+    marginBottom: hp(1.2),
+  },
+  paginationControlsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(2),
+  },
+  pageButton: {
+    minWidth: wp(9.5),
+    height: hp(4),
+    paddingHorizontal: wp(2.5),
+    borderRadius: radius.xs,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    backgroundColor: colors.cardBackground,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pageButtonActive: {
+    backgroundColor: colors.textLink, // #0284C7
+    borderColor: colors.textLink,
+  },
+  pageButtonDisabled: {
+    opacity: 0.5,
+  },
+  pageButtonText: {
+    fontSize: fontSize.xs,
+    fontFamily: fontFamily.medium,
+    color: colors.textSecondary,
+  },
+  pageButtonTextActive: {
+    color: colors.textWhite,
+    fontFamily: fontFamily.bold,
   },
 
   // 6. Attendance Rules Accordion Card

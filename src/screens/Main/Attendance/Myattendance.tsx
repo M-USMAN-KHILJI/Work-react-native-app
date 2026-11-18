@@ -36,6 +36,7 @@ import {
   CustomText as Text,
   CustomTouchableOpacity as TouchableOpacity,
   FadeInUp,
+  AppHeader,
 } from '../../../components';
 import { CustomDrawer } from '../../../navigation/Drawernavigation';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
@@ -130,6 +131,20 @@ export const MyAttendanceScreen: React.FC = () => {
   // Accordion state for rules
   const [isRulesExpanded, setIsRulesExpanded] = useState(false);
 
+  // Pagination: 10 items per page
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / PAGE_SIZE));
+  const paginatedRecords = filteredRecords.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  // Reset to page 1 whenever filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMonth, selectedYear, reportType]);
+
   const handleLogout = () => {
     setIsDropdownOpen(false);
     dispatch(logout());
@@ -146,73 +161,11 @@ export const MyAttendanceScreen: React.FC = () => {
       <StatusBar barStyle="dark-content" />
 
       {/* Top Application Bar */}
-      <View style={styles.topBar}>
-        {isFromDashboard ? (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={styles.menuButton}
-            onPress={() => navigation.goBack()}
-          >
-            <ArrowLeft size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={styles.menuButton}
-            onPress={() => setIsDrawerOpen(true)}
-          >
-            <Menu size={wp(6)} color={colors.textPrimary} strokeWidth={2.2} />
-          </TouchableOpacity>
-        )}
-
-        <View style={styles.topRightActions}>
-          <TouchableOpacity activeOpacity={0.7} style={styles.bellButton}>
-            <Bell size={wp(5.2)} color={colors.textSecondary} strokeWidth={2} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.avatarCircle}
-            onPress={() => setIsDropdownOpen((prev) => !prev)}
-          >
-            <Text style={styles.avatarText}>{user?.initials || 'UK'}</Text>
-          </TouchableOpacity>
-
-          {/* Avatar Dropdown Menu */}
-          {isDropdownOpen && (
-            <>
-              <Pressable
-                style={styles.dropdownBackdrop}
-                onPress={() => setIsDropdownOpen(false)}
-              />
-              <View style={styles.avatarDropdownMenu}>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    setIsDropdownOpen(false);
-                    navigation.navigate('Profile');
-                  }}
-                >
-                  <User size={wp(4.5)} color="#475569" strokeWidth={2} />
-                  <Text style={styles.dropdownItemText}>My Profile</Text>
-                </TouchableOpacity>
-
-                <View style={styles.dropdownItemDivider} />
-
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.dropdownItem}
-                  onPress={handleLogout}
-                >
-                  <LogOut size={wp(4.5)} color="#475569" strokeWidth={2} />
-                  <Text style={styles.dropdownItemText}>Logout</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        </View>
-      </View>
+      <AppHeader
+        showBackButton={isFromDashboard}
+        onOpenDrawer={() => setIsDrawerOpen(true)}
+        onLogout={handleLogout}
+      />
 
       <ScrollView
         ref={scrollViewRef}
@@ -695,7 +648,7 @@ export const MyAttendanceScreen: React.FC = () => {
                     </View>
 
                     {/* Table Data Rows */}
-                    {filteredRecords.map((row, index) => (
+                    {paginatedRecords.map((row, index) => (
                       <View
                         key={row.date}
                         style={[styles.tableRow, index % 2 === 1 && styles.tableRowEven]}
@@ -804,6 +757,65 @@ export const MyAttendanceScreen: React.FC = () => {
                     ))}
                   </View>
                 </ScrollView>
+
+                {/* Pagination Controls Footer matching reference design */}
+                {filteredRecords.length > 0 && (
+                  <View style={styles.paginationContainer}>
+                    <Text style={styles.paginationInfoText}>
+                      Showing page {currentPage} of {totalPages} ({filteredRecords.length} total)
+                    </Text>
+
+                    <View style={styles.paginationControlsRow}>
+                      {/* Prev Button */}
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        disabled={currentPage === 1}
+                        style={[
+                          styles.pageButton,
+                          currentPage === 1 && styles.pageButtonDisabled,
+                        ]}
+                        onPress={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      >
+                        <Text style={styles.pageButtonText}>Prev</Text>
+                      </TouchableOpacity>
+
+                      {/* Numeric Page Buttons */}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                        <TouchableOpacity
+                          key={pageNum}
+                          activeOpacity={0.7}
+                          style={[
+                            styles.pageButton,
+                            currentPage === pageNum && styles.pageButtonActive,
+                          ]}
+                          onPress={() => setCurrentPage(pageNum)}
+                        >
+                          <Text
+                            style={[
+                              styles.pageButtonText,
+                              currentPage === pageNum && styles.pageButtonTextActive,
+                            ]}
+                          >
+                            {pageNum}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+
+                      {/* Next Button */}
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        disabled={currentPage === totalPages}
+                        style={[
+                          styles.pageButton,
+                          currentPage === totalPages && styles.pageButtonDisabled,
+                        ]}
+                        onPress={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      >
+                        <Text style={styles.pageButtonText}>Next</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
               </View>
             )}
           </View>

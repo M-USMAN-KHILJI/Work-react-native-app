@@ -12,3 +12,4 @@ export * from './CustomTouchableOpacity';
 export * from './CheckInModal';
 export * from './CheckOutModal';
 export * from './CustomToastMessage';
+export * from './AppHeader';

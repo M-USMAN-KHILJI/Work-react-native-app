@@ -10,7 +10,7 @@ import {
   wp,
 } from '../constants/display';
 
-export const DRAWER_WIDTH = wp(78);
+export const DRAWER_WIDTH = wp(70);
 
 export const styles = StyleSheet.create({
   backdrop: {
@@ -40,6 +40,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   headerSection: {
+    paddingTop: hp(2),
     paddingHorizontal: wp(5.5),
     paddingBottom: spacing.lg,
     borderBottomWidth: 1,
@@ -75,9 +76,9 @@ export const styles = StyleSheet.create({
   activePillIndicator: {
     position: 'absolute',
     left: 0,
-    top: spacing.sm,
-    bottom: spacing.sm,
-    width: 4,
+    top: spacing.md,
+    bottom: spacing.md,
+    width: 3,
     borderRadius: radius.xs,
     backgroundColor: colors.textLink, // #0284C7
   },
@@ -102,13 +103,15 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.profile.employeeIdBg, // #EFEAFD
   },
   menuItemText: {
-    fontSize: fontSize.md,
-    fontFamily: fontFamily.semiBold,
+    fontSize: fontSize.sm,
+    fontFamily: fontFamily.medium,
+    fontWeight: '500',
     color: colors.textBody,
   },
   menuItemTextActive: {
     color: colors.textLink,
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily.medium,
+    fontWeight: '500',
   },
   menuDivider: {
     height: 1,
@@ -150,8 +153,9 @@ export const styles = StyleSheet.create({
     marginRight: wp(2),
   },
   userName: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.sm,
     fontFamily: fontFamily.bold,
+    // fontFamily: fontFamily.medium, 
     color: colors.textPrimary,
     letterSpacing: -0.2,
   },

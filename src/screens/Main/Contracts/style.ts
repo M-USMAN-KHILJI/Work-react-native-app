@@ -129,7 +129,7 @@ export const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
   },
   heroTitle: {
-    fontSize: fontSize.hero,
+    fontSize: fontSize.xxl,
     fontWeight: '800',
     color: colors.textWhite,
     letterSpacing: -0.3,
@@ -172,7 +172,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md,
     fontWeight: '700',
     color: colors.textPrimary,
   },
@@ -194,7 +194,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(0.6),
   },
   roleTitle: {
-    fontSize: fontSize.xxl,
+    fontSize: fontSize.lg,
     fontWeight: '800',
     color: colors.textPrimary,
   },
@@ -251,7 +251,7 @@ export const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   infoMiniValue: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.sm,
     fontWeight: '700',
     color: colors.textPrimary,
   },
@@ -311,7 +311,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(1.5),
   },
   emptyStateText: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md,
     fontWeight: '700',
     color: colors.textPrimary,
   },
