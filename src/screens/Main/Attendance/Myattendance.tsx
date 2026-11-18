@@ -4,6 +4,7 @@ import {
   ScrollView,
   StatusBar,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -130,6 +131,15 @@ export const MyAttendanceScreen: React.FC = () => {
 
   // Accordion state for rules
   const [isRulesExpanded, setIsRulesExpanded] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    // Reloads / refreshes dynamic attendance calculation & views
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 600);
+  }, []);
 
   // Pagination: 10 items per page
   const PAGE_SIZE = 10;
@@ -171,6 +181,14 @@ export const MyAttendanceScreen: React.FC = () => {
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.textLink, '#047498']}
+            tintColor={colors.textLink}
+          />
+        }
       >
         <View style={styles.mainContent}>
           {/* 1. Hero Card */}

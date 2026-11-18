@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  RefreshControl,
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -34,6 +35,7 @@ import {
   PrimaryButton,
   Checkbox,
   FadeInUp,
+  FadeInLeft,
   GradientText,
   Toast,
   CustomText as Text,
@@ -87,6 +89,16 @@ export const LoginScreen: React.FC = () => {
 
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    // Refresh form state
+    setErrors({});
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 600);
+  }, []);
 
   // Keyboard show/hide listener to enable scrolling only when keyboard is active
   useEffect(() => {
@@ -208,8 +220,8 @@ export const LoginScreen: React.FC = () => {
           accessible={false}
         >
           <ScrollView
-            scrollEnabled={isKeyboardVisible}
-            bounces={isKeyboardVisible}
+            scrollEnabled={isKeyboardVisible || refreshing}
+            bounces={true}
             contentContainerStyle={[
               styles.scrollContent,
               {
@@ -222,12 +234,20 @@ export const LoginScreen: React.FC = () => {
             keyboardShouldPersistTaps="handled"
             onScroll={handleScroll}
             scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={['#38BDF8', '#FFFFFF']}
+                tintColor="#38BDF8"
+              />
+            }
           >
-            {/* Top Hero Branding Section */}
-            <FadeInUp
+            {/* Top Hero Branding Section (animating from left) */}
+            <FadeInLeft
               delay={100}
-              duration={650}
-              distance={hp(4)}
+              duration={700}
+              distance={wp(25)}
             >
               <View style={styles.heroSection}>
                 <View style={styles.heroLogoWrapper}>
@@ -243,11 +263,11 @@ export const LoginScreen: React.FC = () => {
 
                 <GradientText
                   text="Stay aligned."
-                  fontSize={hp(4)}
+                  fontSize={hp(3.6)}
                   fontWeight="800"
                   colors={['#38BDF8', '#7DD3FC']}
                   width={wp(75)}
-                  height={hp(5.2)}
+                  height={hp(4.8)}
                   letterSpacing={-0.6}
                   style={{ marginTop: hp(0.3) }}
                 />
@@ -257,13 +277,13 @@ export const LoginScreen: React.FC = () => {
                   performance — built for teams that move fast.
                 </Text>
               </View>
-            </FadeInUp>
+            </FadeInLeft>
 
-            {/* Floating White Login Card */}
+            {/* Floating White Login Card (animating from down) */}
             <FadeInUp
-              delay={250}
-              duration={750}
-              distance={hp(8)}
+              delay={300}
+              duration={800}
+              distance={hp(12)}
             >
               <View style={styles.cardWrapper}>
                 <View style={styles.card}>

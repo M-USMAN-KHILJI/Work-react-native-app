@@ -21,11 +21,11 @@ export const styles = StyleSheet.create({
     marginBottom: hp(2.5),
   },
   heroTitle: {
-    fontSize: fontSize.hero,
+    fontSize: wp(8.8),
     fontWeight: '800',
     color: colors.textWhite,
-    lineHeight: hp(4.6),
-    letterSpacing: -0.6,
+    lineHeight: hp(5.2),
+    letterSpacing: 0.8,
   },
   heroSubtitle: {
     marginTop: hp(1),

@@ -6,6 +6,7 @@ import {
   Pressable,
   Modal,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -75,6 +76,16 @@ export const DashboardScreen: React.FC = () => {
   const [isCheckOutModalVisible, setIsCheckOutModalVisible] = useState(false);
   const [isOutsideRadiusMode, setIsOutsideRadiusMode] = useState(false);
   const [liveWorkingMinutes, setLiveWorkingMinutes] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await reloadAttendance();
+    } finally {
+      setTimeout(() => setRefreshing(false), 500);
+    }
+  }, [reloadAttendance]);
 
   // Live timer for working hours when checked in
   useEffect(() => {
@@ -227,6 +238,14 @@ export const DashboardScreen: React.FC = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.textLink, '#047498']}
+            tintColor={colors.textLink}
+          />
+        }
       >
         <View style={styles.mainContent}>
           {/* 1. Hero Card */}

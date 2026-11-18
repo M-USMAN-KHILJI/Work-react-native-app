@@ -9,6 +9,7 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
@@ -92,6 +93,14 @@ export const MyProfileScreen: React.FC = () => {
   const confirmPasswordRef = useRef<React.ElementRef<typeof View>>(null);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 600);
+  }, []);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -191,6 +200,14 @@ export const MyProfileScreen: React.FC = () => {
             keyboardShouldPersistTaps="handled"
             onScroll={handleScroll}
             scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[colors.textLink, '#047498']}
+                tintColor={colors.textLink}
+              />
+            }
           >
           {/* 1. Hero Profile Card with Deep Gradient */}
           <FadeInUp delay={100} duration={650} distance={hp(4)}>

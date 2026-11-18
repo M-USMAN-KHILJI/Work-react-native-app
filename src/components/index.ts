@@ -5,6 +5,7 @@ export * from './PrimaryButton';
 export * from './Checkbox';
 export * from './KeyboardAvoidWrapper';
 export * from './FadeInUp';
+export * from './FadeInLeft';
 export * from './GradientText';
 export * from './Toast';
 export * from './CustomText';
