@@ -14,7 +14,7 @@ export type RootStackParamList = {
   Dashboard: undefined;
   Attendance: { scrollToHistory?: boolean; fromDashboard?: boolean } | undefined;
   Contracts: undefined;
-  Profile: undefined;
+  Profile: { fromDropdown?: boolean } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

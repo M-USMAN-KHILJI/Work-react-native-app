@@ -232,9 +232,9 @@ export const DashboardScreen: React.FC = () => {
           {/* 1. Hero Card */}
           <FadeInUp delay={100} duration={650} distance={hp(4)}>
             <LinearGradient
-              colors={['#085B7A', '#064963', '#03374B']}
-              start={{ x: 0.1, y: 0 }}
-              end={{ x: 0.9, y: 1 }}
+              colors={[...colors.heroGradient]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.heroCard}
             >
               <Text style={styles.heroDate}>{currentDayMonthYear.replace(',', ' •')}</Text>

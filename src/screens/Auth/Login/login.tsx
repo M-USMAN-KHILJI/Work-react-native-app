@@ -86,6 +86,24 @@ export const LoginScreen: React.FC = () => {
   }>({});
 
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  // Keyboard show/hide listener to enable scrolling only when keyboard is active
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setIsKeyboardVisible(true)
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // Directional scroll tracking to only dismiss keyboard when scrolling up
   const lastOffsetY = useRef(0);
@@ -172,13 +190,9 @@ export const LoginScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={[
-        colors.bgGradientTop,
-        colors.bgGradientMid,
-        colors.bgGradientBottom,
-      ]}
-      start={{ x: 0.5, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
+      colors={[...colors.loginBgGradient]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
       style={styles.container}
     >
       <StatusBar barStyle="light-content" />
@@ -194,6 +208,8 @@ export const LoginScreen: React.FC = () => {
           accessible={false}
         >
           <ScrollView
+            scrollEnabled={isKeyboardVisible}
+            bounces={isKeyboardVisible}
             contentContainerStyle={[
               styles.scrollContent,
               {

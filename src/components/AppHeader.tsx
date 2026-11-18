@@ -46,7 +46,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     if (onOpenProfile) {
       onOpenProfile();
     } else {
-      navigation.navigate('Profile');
+      navigation.navigate('Profile', { fromDropdown: true });
     }
   };
 

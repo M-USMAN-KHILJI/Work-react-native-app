@@ -31,6 +31,11 @@ import {
   LogOut,
 } from 'lucide-react-native';
 
+import { useNavigation, useRoute } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
+import type { RootStackParamList } from '../../../navigation/Stacknavigation';
+
 import {
   CustomText as Text,
   CustomTouchableOpacity as TouchableOpacity,
@@ -44,6 +49,9 @@ import { useDrawer, useChangePassword } from '../../../hooks';
 import { styles } from './style';
 
 export const MyProfileScreen: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'Profile'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const fromDropdown = route.params?.fromDropdown === true;
   const {
     isDrawerOpen,
     openDrawer,
@@ -158,6 +166,8 @@ export const MyProfileScreen: React.FC = () => {
 
       {/* Top Application Bar */}
       <AppHeader
+        showBackButton={fromDropdown}
+        onBackPress={() => navigation.goBack()}
         onOpenDrawer={() => {
           Keyboard.dismiss();
           openDrawer();
@@ -185,9 +195,9 @@ export const MyProfileScreen: React.FC = () => {
           {/* 1. Hero Profile Card with Deep Gradient */}
           <FadeInUp delay={100} duration={650} distance={hp(4)}>
             <LinearGradient
-              colors={['#085B7A', '#064963', '#03374B']}
-              start={{ x: 0.1, y: 0 }}
-              end={{ x: 0.9, y: 1 }}
+              colors={[...colors.heroGradient]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.heroProfileCard}
             >
               <View style={styles.heroTopRow}>

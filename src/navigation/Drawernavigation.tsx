@@ -199,7 +199,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
               onPress={() => {
                 onClose();
                 if (activeRoute !== 'Profile') {
-                  navigation.navigate('Profile');
+                  navigation.navigate('Profile', { fromDropdown: false });
                 }
               }}
             >

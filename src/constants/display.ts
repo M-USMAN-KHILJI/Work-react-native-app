@@ -19,6 +19,12 @@ export const colors = {
   buttonGradient: ['#086685', '#027ea7', '#008cb9', '#0095c3'] as const,
   checkInButtonGradient: ['#086685', '#027EA7', '#0095C3'] as const,
 
+  // Hero Container Linear Gradient
+  heroGradient: ['#047498', '#037fa9', '#0892be'],
+
+  // Login Screen Background Linear Gradient
+  loginBgGradient: ['#05526a', '#065b76', '#076583', '#086786'],
+
   // Deep Background Gradients (WorkPulse Enterprise Dark Teal Theme)
   bgGradientTop: '#084864',
   bgGradientMid: '#043249',

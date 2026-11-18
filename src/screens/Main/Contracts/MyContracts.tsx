@@ -61,7 +61,7 @@ export const MyContractsScreen: React.FC = () => {
           {/* 1. Hero Gradient Banner */}
           <FadeInUp delay={100} duration={650} distance={hp(4)}>
             <LinearGradient
-              colors={['#0F766E', '#0284C7']}
+              colors={[...colors.heroGradient]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.heroBanner}
