@@ -12,7 +12,7 @@ import {
   Menu,
   Bell,
   FileText,
-  Calendar,
+  CalendarCheck,
   Wallet,
   Briefcase,
   History,
@@ -126,7 +126,7 @@ export const MyContractsScreen: React.FC = () => {
                   {/* Duration */}
                   <View style={styles.infoMiniBox}>
                     <View style={styles.infoMiniLabelRow}>
-                      <Calendar size={wp(4)} color="#64748B" strokeWidth={2} />
+                      <CalendarCheck size={wp(4)} color="#64748B" strokeWidth={2} />
                       <Text style={styles.infoMiniLabel}>Duration</Text>
                     </View>
                     <Text style={styles.infoMiniValue}>Jun 15, 2026 – Open</Text>

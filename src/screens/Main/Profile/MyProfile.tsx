@@ -19,7 +19,7 @@ import {
   User,
   Mail,
   Briefcase,
-  Calendar,
+  CalendarCheck,
   Lock,
   Eye,
   EyeOff,
@@ -253,7 +253,7 @@ export const MyProfileScreen: React.FC = () => {
               {/* Member Since Card */}
               <View style={[styles.summaryCard, { backgroundColor: colors.profile.memberSinceBg }]}>
                 <View style={[styles.summaryIconBox, { backgroundColor: '#DCFCE7' }]}>
-                  <Calendar size={wp(5.2)} color="#15803D" strokeWidth={2.2} />
+                  <CalendarCheck size={wp(5.2)} color="#15803D" strokeWidth={2.2} />
                 </View>
                 <View style={styles.summaryInfoCol}>
                   <Text style={styles.summaryLabel}>MEMBER SINCE</Text>
@@ -346,7 +346,7 @@ export const MyProfileScreen: React.FC = () => {
                 {/* Joining Date */}
                 <View style={[styles.infoTile, { backgroundColor: colors.profile.joiningDateBg }]}>
                   <View style={styles.infoTileIconBox}>
-                    <Calendar size={wp(4.8)} color="#0284C7" />
+                    <CalendarCheck size={wp(4.8)} color="#0284C7" />
                   </View>
                   <View style={styles.infoTileContent}>
                     <Text style={styles.infoTileLabel}>JOINING DATE</Text>

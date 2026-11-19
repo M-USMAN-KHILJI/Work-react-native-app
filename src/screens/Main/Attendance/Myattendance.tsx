@@ -12,7 +12,7 @@ import {
   Menu,
   ArrowLeft,
   Bell,
-  Calendar,
+  CalendarCheck,
   ChevronDown,
   ChevronUp,
   FileText,
@@ -207,7 +207,7 @@ export const MyAttendanceScreen: React.FC = () => {
 
               <View style={styles.heroPillsRow}>
                 <View style={styles.heroPill}>
-                  <Calendar size={wp(3.4)} color="#FFFFFF" />
+                  <CalendarCheck size={wp(3.4)} color="#FFFFFF" />
                   <Text style={styles.heroPillText}>
                     {reportType === 'Monthly' ? 'Monthly view' : 'Yearly view'}
                   </Text>
@@ -225,13 +225,13 @@ export const MyAttendanceScreen: React.FC = () => {
               </View>
 
               <View style={styles.monthSelectorButton}>
-                <Calendar size={wp(4.2)} color={colors.textPrimary} />
+                <CalendarCheck size={wp(4.4)} color={colors.textWhite} strokeWidth={2.2} />
                 <Text style={styles.monthSelectorButtonText}>
                   {reportType === 'Monthly' ? `${selectedMonth} ${selectedYear}` : selectedYear}
                 </Text>
               </View>
 
-              <Text style={styles.heroFooterHint}>Selected recording period</Text>
+              <Text style={styles.heroFooterHint}>Selected reporting period</Text>
             </LinearGradient>
           </FadeInUp>
 
@@ -580,7 +580,7 @@ export const MyAttendanceScreen: React.FC = () => {
             <View style={[styles.statCard, styles.cardRemainingPaidLeaves]}>
               <View style={styles.statCardRow}>
                 <View style={[styles.statIconBox, { backgroundColor: '#E0E7FF' }]}>
-                  <Calendar size={wp(5.2)} color="#4F46E5" strokeWidth={2.3} />
+                  <CalendarCheck size={wp(5.2)} color="#4F46E5" strokeWidth={2.3} />
                 </View>
                 <View style={styles.statContentCol}>
                   <Text style={styles.statLabel}>REMAINING PAID LEAVES</Text>

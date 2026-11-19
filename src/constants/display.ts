@@ -120,6 +120,10 @@ export const colors = {
     remainingPaidLeavesBorder: '#C7D2FE',
   },
 
+  // Hero Month Capsule in Attendance
+  monthCapsuleBg: 'rgba(255, 255, 255, 0.16)',
+  monthCapsuleBorder: 'rgba(255, 255, 255, 0.35)',
+
   // Modal Colors
   modal: {
     timeBoxBg: '#F0FDFA',

@@ -13,7 +13,7 @@ import {
   Menu,
   Bell,
   Clock,
-  Calendar,
+  CalendarCheck,
   CheckCircle,
   Briefcase,
   TrendingUp,
@@ -280,7 +280,7 @@ export const DashboardScreen: React.FC = () => {
                 style={styles.attendanceButton}
                 onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
               >
-                <Calendar size={wp(4.2)} color={colors.textPrimary} />
+                <CalendarCheck size={wp(4.2)} color={colors.textPrimary} />
                 <Text style={styles.attendanceButtonText}>Attendance</Text>
               </TouchableOpacity>
             </LinearGradient>
@@ -539,7 +539,7 @@ export const DashboardScreen: React.FC = () => {
                 end={{ x: 1, y: 1 }}
                 style={styles.metricIconGradientBox}
               >
-                <Calendar size={wp(5.6)} color="#059669" strokeWidth={2.4} />
+                <CalendarCheck size={wp(5.6)} color="#059669" strokeWidth={2.4} />
               </LinearGradient>
               <View style={styles.metricTextCol}>
                 <Text style={styles.metricLabel}>WORKING HOURS</Text>
@@ -648,7 +648,7 @@ export const DashboardScreen: React.FC = () => {
           <View style={styles.paidLeavesCard}>
             <View style={styles.paidLeavesHeaderBanner}>
               <View style={styles.leavesHeaderTitleRow}>
-                <Calendar size={wp(4.4)} color="#4F46E5" strokeWidth={2.3} />
+                <CalendarCheck size={wp(4.4)} color="#4F46E5" strokeWidth={2.3} />
                 <Text style={styles.leavesHeaderTitle}>Paid Leaves (Current Contract)</Text>
               </View>
             </View>
@@ -710,7 +710,7 @@ export const DashboardScreen: React.FC = () => {
               onPress={() => navigation.navigate('Attendance', { fromDashboard: true })}
             >
               <View style={styles.quickLinkLeft}>
-                <Calendar size={wp(4.2)} color="#0D9488" />
+                <CalendarCheck size={wp(4.2)} color="#0D9488" />
                 <Text style={styles.quickLinkText}>Attendance overview</Text>
               </View>
               <ChevronRight size={wp(4.5)} color={colors.textMuted} />
