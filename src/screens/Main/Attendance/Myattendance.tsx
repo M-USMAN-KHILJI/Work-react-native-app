@@ -46,6 +46,7 @@ import { ATTENDANCE_RULES_LIST } from '../../../utils/attendanceRules';
 import { computeRecordRules } from '../../../utils/recordCalculator';
 import { styles } from './style';
 import { useAppDispatch, useAppSelector, logout } from '../../../redux';
+import SelectDropdown from 'react-native-select-dropdown';
 
 type AttendanceNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Attendance'>;
 type AttendanceRouteProp = RouteProp<RootStackParamList, 'Attendance'>;
@@ -55,7 +56,17 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const YEARS = ['2026', '2025', '2024'];
+// App started in 2026; dynamically generate list from 2026 up to the current year
+const START_YEAR = 2026;
+const getAvailableYears = (): string[] => {
+  const currentYear = new Date().getFullYear();
+  const endYear = Math.max(currentYear, START_YEAR);
+  const years: string[] = [];
+  for (let y = endYear; y >= START_YEAR; y--) {
+    years.push(String(y));
+  }
+  return years;
+};
 
 export const MyAttendanceScreen: React.FC = () => {
   const navigation = useNavigation<AttendanceNavigationProp>();
@@ -77,6 +88,7 @@ export const MyAttendanceScreen: React.FC = () => {
 
   // Filters
   const [reportType, setReportType] = useState<'Monthly' | 'Yearly'>('Monthly');
+  const availableYears = React.useMemo(() => getAvailableYears(), []);
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonthName);
   const [selectedYear, setSelectedYear] = useState<string>(currentYearStr);
 
@@ -257,147 +269,132 @@ export const MyAttendanceScreen: React.FC = () => {
             {/* Select Report View Type (Monthly / Yearly) */}
             <View style={styles.selectorWrapper}>
               <Text style={styles.selectorLabel}>REPORT TYPE</Text>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.selectorButton}
-                onPress={() => {
-                  setIsTypeOpen((prev) => !prev);
-                  setIsMonthOpen(false);
-                  setIsYearOpen(false);
+              <SelectDropdown
+                data={['Monthly', 'Yearly']}
+                defaultValue={reportType}
+                onSelect={(selectedItem) => {
+                  setReportType(selectedItem);
                 }}
-              >
-                <Text style={styles.selectorButtonText}>{reportType}</Text>
-                {isTypeOpen ? (
-                  <ChevronUp size={wp(4.5)} color="#64748B" />
-                ) : (
-                  <ChevronDown size={wp(4.5)} color="#64748B" />
+                renderButton={(selectedItem, isOpened) => (
+                  <View style={[styles.selectDropdownButton, isOpened && styles.selectDropdownButtonActive]}>
+                    <Text style={styles.selectDropdownButtonText}>{selectedItem || reportType}</Text>
+                    {isOpened ? (
+                      <ChevronUp size={wp(4.5)} color={colors.primary} />
+                    ) : (
+                      <ChevronDown size={wp(4.5)} color="#64748B" />
+                    )}
+                  </View>
                 )}
-              </TouchableOpacity>
-
-              {isTypeOpen && (
-                <View style={styles.dropdownOptionsList}>
-                  {(['Monthly', 'Yearly'] as const).map((type) => (
-                    <TouchableOpacity
-                      key={type}
+                renderItem={(item, index, isSelected) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.selectDropdownItem,
+                      isSelected && styles.selectDropdownItemActive,
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.dropdownOptionItem,
-                        reportType === type && styles.dropdownOptionItemActive,
+                        styles.selectDropdownItemText,
+                        isSelected && styles.selectDropdownItemTextActive,
                       ]}
-                      onPress={() => {
-                        setReportType(type);
-                        setIsTypeOpen(false);
-                      }}
                     >
-                      <Text
-                        style={[
-                          styles.dropdownOptionText,
-                          reportType === type && styles.dropdownOptionTextActive,
-                        ]}
-                      >
-                        {type}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+                      {item}
+                    </Text>
+                  </View>
+                )}
+                showsVerticalScrollIndicator={false}
+                dropdownStyle={styles.selectDropdownMenu}
+                dropdownOverlayColor="transparent"
+              />
             </View>
 
             {/* Select Month (shown when Monthly is chosen) */}
             {reportType === 'Monthly' && (
               <View style={styles.selectorWrapper}>
                 <Text style={styles.selectorLabel}>MONTH</Text>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.selectorButton}
-                  onPress={() => {
-                    setIsMonthOpen((prev) => !prev);
-                    setIsTypeOpen(false);
-                    setIsYearOpen(false);
+                <SelectDropdown
+                  data={MONTHS}
+                  defaultValue={selectedMonth}
+                  onSelect={(selectedItem) => {
+                    setSelectedMonth(selectedItem);
                   }}
-                >
-                  <Text style={styles.selectorButtonText}>{selectedMonth}</Text>
-                  {isMonthOpen ? (
-                    <ChevronUp size={wp(4.5)} color="#64748B" />
-                  ) : (
-                    <ChevronDown size={wp(4.5)} color="#64748B" />
+                  renderButton={(selectedItem, isOpened) => (
+                    <View style={[styles.selectDropdownButton, isOpened && styles.selectDropdownButtonActive]}>
+                      <Text style={styles.selectDropdownButtonText}>{selectedItem || selectedMonth}</Text>
+                      {isOpened ? (
+                        <ChevronUp size={wp(4.5)} color={colors.primary} />
+                      ) : (
+                        <ChevronDown size={wp(4.5)} color="#64748B" />
+                      )}
+                    </View>
                   )}
-                </TouchableOpacity>
-
-                {isMonthOpen && (
-                  <View style={styles.dropdownOptionsList}>
-                    {MONTHS.map((m) => (
-                      <TouchableOpacity
-                        key={m}
+                  renderItem={(item, index, isSelected) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.selectDropdownItem,
+                        isSelected && styles.selectDropdownItemActive,
+                      ]}
+                    >
+                      <Text
                         style={[
-                          styles.dropdownOptionItem,
-                          selectedMonth === m && styles.dropdownOptionItemActive,
+                          styles.selectDropdownItemText,
+                          isSelected && styles.selectDropdownItemTextActive,
                         ]}
-                        onPress={() => {
-                          setSelectedMonth(m);
-                          setIsMonthOpen(false);
-                        }}
                       >
-                        <Text
-                          style={[
-                            styles.dropdownOptionText,
-                            selectedMonth === m && styles.dropdownOptionTextActive,
-                          ]}
-                        >
-                          {m}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
+                        {item}
+                      </Text>
+                    </View>
+                  )}
+                  showsVerticalScrollIndicator={true}
+                  dropdownStyle={styles.selectDropdownMenu}
+                  dropdownOverlayColor="transparent"
+                />
               </View>
             )}
 
             {/* Select Year */}
             <View style={styles.selectorWrapper}>
               <Text style={styles.selectorLabel}>YEAR</Text>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.selectorButton}
-                onPress={() => {
-                  setIsYearOpen((prev) => !prev);
-                  setIsTypeOpen(false);
-                  setIsMonthOpen(false);
+              <SelectDropdown
+                data={availableYears}
+                defaultValue={selectedYear}
+                onSelect={(selectedItem) => {
+                  setSelectedYear(selectedItem);
                 }}
-              >
-                <Text style={styles.selectorButtonText}>{selectedYear}</Text>
-                {isYearOpen ? (
-                  <ChevronUp size={wp(4.5)} color="#64748B" />
-                ) : (
-                  <ChevronDown size={wp(4.5)} color="#64748B" />
+                renderButton={(selectedItem, isOpened) => (
+                  <View style={[styles.selectDropdownButton, isOpened && styles.selectDropdownButtonActive]}>
+                    <Text style={styles.selectDropdownButtonText}>{selectedItem || selectedYear}</Text>
+                    {isOpened ? (
+                      <ChevronUp size={wp(4.5)} color={colors.primary} />
+                    ) : (
+                      <ChevronDown size={wp(4.5)} color="#64748B" />
+                    )}
+                  </View>
                 )}
-              </TouchableOpacity>
-
-              {isYearOpen && (
-                <View style={styles.dropdownOptionsList}>
-                  {YEARS.map((y) => (
-                    <TouchableOpacity
-                      key={y}
+                renderItem={(item, index, isSelected) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.selectDropdownItem,
+                      isSelected && styles.selectDropdownItemActive,
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.dropdownOptionItem,
-                        selectedYear === y && styles.dropdownOptionItemActive,
+                        styles.selectDropdownItemText,
+                        isSelected && styles.selectDropdownItemTextActive,
                       ]}
-                      onPress={() => {
-                        setSelectedYear(y);
-                        setIsYearOpen(false);
-                      }}
                     >
-                      <Text
-                        style={[
-                          styles.dropdownOptionText,
-                          selectedYear === y && styles.dropdownOptionTextActive,
-                        ]}
-                      >
-                        {y}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+                      {item}
+                    </Text>
+                  </View>
+                )}
+                showsVerticalScrollIndicator={false}
+                dropdownStyle={styles.selectDropdownMenu}
+                dropdownOverlayColor="transparent"
+              />
             </View>
           </View>
 

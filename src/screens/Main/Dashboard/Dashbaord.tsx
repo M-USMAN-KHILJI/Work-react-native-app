@@ -61,6 +61,7 @@ export const DashboardScreen: React.FC = () => {
   } = useDrawer();
 
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const hasShownLoginToast = useAppSelector((state) => state.auth.hasShownLoginToast);
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const rememberMe = useAppSelector((state) => state.auth.rememberMe);
@@ -136,6 +137,16 @@ export const DashboardScreen: React.FC = () => {
     month: 'long',
     year: 'numeric',
   });
+
+  // Dynamic time-based greeting (morning: 5am-12pm, afternoon: 12pm-5pm, evening: 5pm-5am)
+  const currentHour = now.getHours();
+  const timeGreeting = currentHour >= 5 && currentHour < 12
+    ? 'Good morning'
+    : currentHour >= 12 && currentHour < 17
+    ? 'Good afternoon'
+    : 'Good evening';
+
+  const userFirstName = user?.name ? user.name.trim().split(' ')[0] : 'Usman';
 
   const isTodayLate = isCheckedIn && !!todayRecord?.statuses?.includes('Late');
   const lateByText = todayRecord?.lateByFormatted && todayRecord.lateByFormatted !== '—'
@@ -257,7 +268,7 @@ export const DashboardScreen: React.FC = () => {
               style={styles.heroCard}
             >
               <Text style={styles.heroDate}>{currentDayMonthYear.replace(',', ' •')}</Text>
-              <Text style={styles.heroGreeting}>Good evening,{'\n'}Usman</Text>
+              <Text style={styles.heroGreeting}>{timeGreeting},{'\n'}{userFirstName}</Text>
               <Text style={styles.heroDescription}>
                 Check in, track your day, and review Present, Late, Half Leave, Leave, and
                 Paid Leave — all from one place.

@@ -215,7 +215,7 @@ export const styles = StyleSheet.create({
     marginTop: hp(0.2),
   },
 
-  // Dropdown Selectors inside Report Card
+  // Dropdown Selectors inside Report Card (powered by react-native-select-dropdown)
   selectorWrapper: {
     marginBottom: hp(1.4),
   },
@@ -226,7 +226,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp(0.5),
     letterSpacing: 0.3,
   },
-  selectorButton: {
+  selectDropdownButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -237,35 +237,41 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(3.8),
     paddingVertical: hp(1.3),
   },
-  selectorButtonText: {
+  selectDropdownButtonActive: {
+    borderColor: colors.primary,
+    borderWidth: 1.5,
+  },
+  selectDropdownButtonText: {
     fontSize: fontSize.sm,
     fontWeight: '600',
     color: colors.textDark,
   },
-  dropdownOptionsList: {
-    marginTop: hp(0.6),
+  selectDropdownMenu: {
     backgroundColor: colors.cardBackground,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.inputBorder,
+    borderColor: colors.borderDivider,
     overflow: 'hidden',
-    ...shadows.card,
+    ...shadows.dropdown,
+    elevation: 12,
   },
-  dropdownOptionItem: {
-    paddingHorizontal: wp(4),
-    paddingVertical: hp(1.2),
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderDivider,
+  selectDropdownItem: {
+    paddingHorizontal: wp(4.5),
+    paddingVertical: hp(1.3),
+    backgroundColor: colors.cardBackground,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  dropdownOptionItemActive: {
+  selectDropdownItemActive: {
     backgroundColor: '#F0F9FF',
   },
-  dropdownOptionText: {
+  selectDropdownItemText: {
     fontSize: fontSize.md,
     color: colors.textBody,
     fontWeight: '500',
   },
-  dropdownOptionTextActive: {
+  selectDropdownItemTextActive: {
     color: colors.textLink,
     fontWeight: '700',
   },

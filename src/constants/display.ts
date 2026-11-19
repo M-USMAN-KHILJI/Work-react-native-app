@@ -222,4 +222,11 @@ export const shadows = {
     shadowRadius: 8,
     elevation: 4,
   },
+  dropdown: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 12,
+  },
 } as const;
