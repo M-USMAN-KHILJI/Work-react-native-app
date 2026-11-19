@@ -13,6 +13,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react-native';
+import { Avatar } from '@kolking/react-native-avatar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -222,7 +223,12 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
           <View style={styles.bottomCardWrapper}>
             <View style={styles.bottomCard}>
               <View style={styles.userAvatarBox}>
-                <Text style={styles.userAvatarText}>{user?.initials || 'U'}</Text>
+                <Avatar
+                  name={user?.name || 'Usman Khurram'}
+                  size={wp(11)}
+                  color={colors.profile.emailAddressBg}
+                  textStyle={styles.userAvatarText}
+                />
               </View>
 
               <View style={styles.userInfoCol}>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Menu, ArrowLeft, Bell, User, LogOut } from 'lucide-react-native';
+import { Avatar } from '@kolking/react-native-avatar';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/Stacknavigation';
@@ -31,7 +32,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   const user = useAppSelector((state) => state.auth.user);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const initials = user?.initials || (user?.name ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase() : 'UK');
+  const userName = user?.name || 'Usman Khurram';
 
   const handleBack = () => {
     if (onBackPress) {
@@ -94,10 +95,15 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
         <TouchableOpacity
           activeOpacity={0.8}
-          style={styles.avatarCircle}
+          style={styles.avatarButton}
           onPress={() => setIsDropdownOpen((prev) => !prev)}
         >
-          <Text style={styles.avatarText}>{initials}</Text>
+          <Avatar
+            name={userName}
+            size={wp(9)}
+            color={colors.primaryHover}
+            textStyle={styles.avatarText}
+          />
         </TouchableOpacity>
 
         {/* Dropdown Menu */}
@@ -167,11 +173,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarCircle: {
+  avatarButton: {
     width: wp(9),
     height: wp(9),
     borderRadius: wp(4.5),
-    backgroundColor: colors.primaryHover,
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },

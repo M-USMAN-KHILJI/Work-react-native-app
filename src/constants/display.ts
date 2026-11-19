@@ -124,6 +124,10 @@ export const colors = {
   monthCapsuleBg: 'rgba(255, 255, 255, 0.16)',
   monthCapsuleBorder: 'rgba(255, 255, 255, 0.35)',
 
+  // Profile Avatar Hero Gradient & Ring
+  profileAvatarRing: 'rgba(255, 255, 255, 0.45)',
+  profileAvatarGradient: ['#056787', '#03769c', '#008ab7'] as const,
+
   // Modal Colors
   modal: {
     timeBoxBg: '#F0FDFA',

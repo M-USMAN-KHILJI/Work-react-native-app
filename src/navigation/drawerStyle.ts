@@ -138,7 +138,7 @@ export const styles = StyleSheet.create({
     width: wp(11),
     height: wp(11),
     borderRadius: radius.full,
-    backgroundColor: colors.profile.emailAddressBg,
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: wp(3),

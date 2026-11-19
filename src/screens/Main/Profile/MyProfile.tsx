@@ -36,6 +36,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { RootStackParamList } from '../../../navigation/Stacknavigation';
+import { Avatar } from '@kolking/react-native-avatar';
+import { useAppSelector } from '../../../redux';
 
 import {
   CustomText as Text,
@@ -53,6 +55,8 @@ export const MyProfileScreen: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'Profile'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const fromDropdown = route.params?.fromDropdown === true;
+  const user = useAppSelector((state) => state.auth.user);
+  const userName = user?.name || 'Usman Khurram';
   const {
     isDrawerOpen,
     openDrawer,
@@ -97,10 +101,16 @@ export const MyProfileScreen: React.FC = () => {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
+    // Reset password fields and errors on profile pull-to-refresh
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setErrors({});
+    Keyboard.dismiss();
     setTimeout(() => {
       setRefreshing(false);
-    }, 600);
-  }, []);
+    }, 500);
+  }, [setCurrentPassword, setNewPassword, setConfirmPassword, setErrors]);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -219,12 +229,24 @@ export const MyProfileScreen: React.FC = () => {
             >
               <View style={styles.heroTopRow}>
                 <View style={styles.avatarLarge}>
-                  <Text style={styles.avatarLargeText}>UK</Text>
+                  <LinearGradient
+                    colors={[...colors.profileAvatarGradient]}
+                    start={{ x: 0.1, y: 0.1 }}
+                    end={{ x: 0.9, y: 0.9 }}
+                    style={styles.avatarGradientBox}
+                  >
+                    <Avatar
+                      name={userName}
+                      size={wp(16)}
+                      color="transparent"
+                      textStyle={styles.avatarLargeText}
+                    />
+                  </LinearGradient>
                 </View>
                 <View style={styles.heroNameCol}>
                   <Text style={styles.heroSubtitle}>Account • My Profile</Text>
-                  <Text style={styles.heroTitle}>Usman Khurram</Text>
-                  <Text style={styles.heroRole}>Intern • Employee</Text>
+                  <Text style={styles.heroTitle}>{user?.name || 'Usman Khurram'}</Text>
+                  <Text style={styles.heroRole}>{user?.role || 'Intern • Employee'}</Text>
                 </View>
               </View>
 

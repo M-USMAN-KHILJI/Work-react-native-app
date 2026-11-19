@@ -192,7 +192,7 @@ export const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   attendanceSubinfo: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     color: colors.textSecondary,
     marginTop: hp(0.4),
     fontWeight: '500',

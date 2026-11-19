@@ -135,11 +135,15 @@ export const MyAttendanceScreen: React.FC = () => {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    // Reloads / refreshes dynamic attendance calculation & views
+    // Reset filters and pagination to current view
+    setCurrentPage(1);
+    setSelectedMonth(currentMonthName);
+    setSelectedYear(currentYearStr);
+    setIsRulesExpanded(false);
     setTimeout(() => {
       setRefreshing(false);
-    }, 600);
-  }, []);
+    }, 500);
+  }, [currentMonthName, currentYearStr]);
 
   // Pagination: 10 items per page
   const PAGE_SIZE = 10;
